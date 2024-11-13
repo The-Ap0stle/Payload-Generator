@@ -163,19 +163,16 @@
 
   <!-- Content Sections -->
   <div class="content">
-    <!-- Search Section (Landing page now) -->
-    <div id="searchSection" class="search-section" style="display:block;"> <!-- Display this by default -->
+    <!-- Search Section -->
+    <div id="searchSection" class="search-section" style="display:block;">
       <h1>Search for Payloads</h1>
       <input type="text" id="searchInput" placeholder="Search Keywords..." onkeyup="filterPayloads()">
       <div class="filter-container">
         <select id="primaryFilter" onchange="updateSecondaryFilter()">
-          <option value="">Select Vulnerability</option>
-          <option value="sql">SQL Injection</option>
-          <option value="xss">XSS</option>
-          <option value="cmd">Command Injection</option>
+          <option value="">Select Category</option>
         </select>
         <select id="secondaryFilter">
-          <option value="">Select Type</option>
+          <option value="">Select Payload</option>
         </select>
         <button onclick="executeSearch()">Search</button>
       </div>
@@ -196,8 +193,8 @@
   </div>
 
   <script>
-    const payloadFiles = ['sql_injection.txt', 'xss.txt', 'command_injection.txt'];
-    let allPayloads = {};
+    const allPayloads = {};
+    const baseUrl = 'https://api.github.com/repos/YOUR_USERNAME/YOUR_REPOSITORY/contents/Payloads/';
 
     // Toggle hamburger menu
     function toggleMenu() {
@@ -219,83 +216,152 @@
       document.getElementById('menuItems').style.display = 'none';  // Hide menu
     }
 
-    // Load payloads from GitHub repository
+    // Load payloads and categories dynamically from GitHub
     async function loadPayloads() {
-      const url = 'https://YOUR_USERNAME.github.io/YOUR_REPOSITORY/payloads.json';
-      try {
-        const response = await fetch(url);
-        const payloads = await response.json();
-        allPayloads = payloads; // Store payload data in allPayloads for use in filter functions
-      } catch (error) {
-        console.error("Failed to load payloads:", error);
-      }
-    }
-    
-    document.addEventListener("DOMContentLoaded", loadPayloads);
-    
+      const headers = {
+        'Authorization': 'token YOUR_PERSONAL_ACCESS_TOKEN'
+      };
 
-    // Update Secondary Filter Options
+      const response = await fetch(baseUrl, { headers });
+      const directories = await response.json();
+
+      for (const dir of directories) {
+        if (dir.type === 'dir') {
+          allPayloads[dir.name] = await loadCategoryPayloads(dir.name);
+        }
+      }
+
+      updateFilters();
+    }
+
+    // Load payloads within a category
+    async function loadCategoryPayloads(category) {
+      const headers = {
+        'Authorization': 'token YOUR_PERSONAL_ACCESS_TOKEN'
+      };
+
+      const categoryUrl = `${baseUrl}${category}/`;
+      const response = await fetch(categoryUrl, { headers });
+      const files = await response.json();
+
+      const payloads = {};
+      for (const file of files) {
+        if (file.type === 'file') {
+          const contentResponse = await fetch(file.download_url, { headers });
+          const content = await contentResponse.text();
+          payloads[file.name] = content.split('\n').filter(line => line.trim() !== '');
+        }
+      }
+
+      return payloads;
+    }
+
+    // Update the filters based on loaded payloads
+    function updateFilters() {
+      const primaryFilter = document.getElementById('primaryFilter');
+      const secondaryFilter = document.getElementById('secondaryFilter');
+
+      primaryFilter.innerHTML = '<option value="">Select Category</option>';
+      for (const category in allPayloads) {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        primaryFilter.appendChild(option);
+      }
+
+      primaryFilter.disabled = false;
+    }
+
+    // Update secondary filter based on selected primary filter
     function updateSecondaryFilter() {
-      const primaryFilter = document.getElementById("primaryFilter").value;
-      const secondaryFilter = document.getElementById("secondaryFilter");
-      secondaryFilter.innerHTML = "";
+      const primaryFilter = document.getElementById('primaryFilter');
+      const secondaryFilter = document.getElementById('secondaryFilter');
 
-      if (primaryFilter === "sql") {
-        secondaryFilter.innerHTML += `    
-          <option value="auth">Authentication Bypass</option>
-          <option value="error">Error Based</option>
-          <option value="time">Time Based</option>
-          <option value="union">Union Based</option>
-          <option value="generic">Generic</option>
-        `;
-        secondaryFilter.classList.remove("disabled");
-      } else if (primaryFilter === "xss") {
-        secondaryFilter.innerHTML += `    
-          <option value="stored">Stored</option>
-          <option value="reflected">Reflected</option>
-        `;
-        secondaryFilter.classList.remove("disabled");
-      } else if (primaryFilter === "cmd") {
-        secondaryFilter.innerHTML += `    
-          <option value="os">Operating System Command</option>
-        `;
-        secondaryFilter.classList.remove("disabled");
-      } else {
-        secondaryFilter.innerHTML = '<option value="">Select Type</option>';
-        secondaryFilter.classList.add("disabled");
+      const selectedCategory = primaryFilter.value;
+      if (!selectedCategory) return;
+
+      secondaryFilter.innerHTML = '<option value="">Select Payload</option>';
+      const payloadFiles = allPayloads[selectedCategory];
+
+      for (const file in payloadFiles) {
+        const option = document.createElement('option');
+        option.value = file;
+        option.textContent = file;
+        secondaryFilter.appendChild(option);
       }
+
+      secondaryFilter.disabled = false;
     }
 
-    // Filter Payloads
+    // Filter payloads based on search input
     function filterPayloads() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      const results = [];
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const resultsContainer = document.getElementById("searchResults");
+      resultsContainer.innerHTML = "";
 
       for (const category in allPayloads) {
-        const filtered = allPayloads[category].filter(payload => payload.toLowerCase().includes(query));
-        if (filtered.length > 0) results.push(...filtered);
+        const filtered = [];
+        for (const file in allPayloads[category]) {
+          const payloads = allPayloads[category][file];
+          const filteredPayloads = payloads.filter(payload => payload.toLowerCase().includes(input));
+          if (filteredPayloads.length > 0) {
+            filtered.push({ file, payloads: filteredPayloads });
+          }
+        }
+
+        if (filtered.length > 0) {
+          const categoryTitle = document.createElement('h3');
+          categoryTitle.textContent = category.replace('.txt', '').toUpperCase();
+          resultsContainer.appendChild(categoryTitle);
+
+          filtered.forEach(item => {
+            const fileTitle = document.createElement('h4');
+            fileTitle.textContent = item.file;
+            resultsContainer.appendChild(fileTitle);
+            item.payloads.forEach(payload => {
+              const payloadItem = document.createElement('div');
+              payloadItem.classList.add('payload-item');
+              payloadItem.textContent = payload;
+              resultsContainer.appendChild(payloadItem);
+            });
+          });
+        }
       }
-
-      displayResults(results);
     }
 
-    // Display Results
-    function displayResults(results) {
-      const resultsContainer = document.getElementById('searchResults');
-      resultsContainer.innerHTML = results.map(result => `<div class="payload-item">${result}</div>`).join('');
+    // Execute search function
+    function executeSearch() {
+      filterPayloads();
     }
 
-    // Display Index
+    // Display index of all payloads
     function displayIndex() {
       const indexList = document.getElementById('indexList');
-      indexList.innerHTML = payloadFiles.map(file => `<div class="payload-item">${file.replace('.txt', '')}</div>`).join('');
+      indexList.innerHTML = '';
+
+      for (const category in allPayloads) {
+        const categoryTitle = document.createElement('h3');
+        categoryTitle.textContent = category.toUpperCase();
+        indexList.appendChild(categoryTitle);
+
+        for (const file in allPayloads[category]) {
+          const fileTitle = document.createElement('h4');
+          fileTitle.textContent = file;
+          indexList.appendChild(fileTitle);
+
+          allPayloads[category][file].forEach(payload => {
+            const payloadItem = document.createElement('div');
+            payloadItem.classList.add('payload-item');
+            payloadItem.textContent = payload;
+            indexList.appendChild(payloadItem);
+          });
+        }
+      }
     }
 
-    // Initialize the page
-    document.addEventListener("DOMContentLoaded", () => {
-      loadPayloads();
-      showSection('search');  // Show the search section by default
-    });
+    // Initialize
+    loadPayloads();
   </script>
+
 </body>
 </html>
