@@ -1,65 +1,68 @@
-name: Update Payloads JSON
+name: Generate Payloads JSON
 
 on:
   push:
     paths:
-      - 'Payloads/**'
+      - 'Payloads/**'   # Trigger the workflow only when files in the Payloads directory are modified.
 
 jobs:
-  update-json:
+  create-payloads-json:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'  # You can specify the version you need
-
-      - name: Install dependencies
+      - name: Generate payloads.json file
         run: |
-          npm install fs-extra
+          # Create Python script to dynamically build payloads.json
+          cat << 'EOF' > generate_payloads_json.py
+          import os
+          import json
 
-      - name: Generate JSON from Payloads
+          # Root directory for Payloads
+          root_dir = 'Payloads'
+          payloads_data = {}
+
+          def build_payload_structure(path):
+              """Recursively build JSON structure from directory and files."""
+              payload_dict = {}
+              for entry in os.listdir(path):
+                  full_path = os.path.join(path, entry)
+                  if os.path.isdir(full_path):
+                      # Recurse into subdirectory
+                      payload_dict[entry] = build_payload_structure(full_path)
+                  elif os.path.isfile(full_path) and entry.endswith('.txt'):
+                      # Read file content and store as list of lines
+                      with open(full_path, 'r') as f:
+                          payload_dict[entry.replace('.txt', '')] = [line.strip() for line in f if line.strip()]
+              return payload_dict
+
+          # Populate payloads_data with folder structure starting from root_dir
+          for main_dir in os.listdir(root_dir):
+              main_dir_path = os.path.join(root_dir, main_dir)
+              if os.path.isdir(main_dir_path):
+                  payloads_data[main_dir] = build_payload_structure(main_dir_path)
+
+          # Write JSON data to payloads.json
+          with open('payloads.json', 'w') as json_file:
+              json.dump(payloads_data, json_file, indent=2)
+
+          print("Generated payloads.json successfully.")
+          EOF
+          
+          # Run the Python script to generate payloads.json
+          python3 generate_payloads_json.py
+
+      - name: Display the generated payloads.json (for debugging purposes)
+        run: cat payloads.json
+
+      - name: Commit and push payloads.json
         run: |
-          const fs = require('fs-extra');
-          const path = require('path');
-
-          const payloadsDir = path.join(__dirname, 'Payloads');
-          const outputFile = path.join(__dirname, 'payloads.json');
-
-          const generatePayloadsJson = (dir) => {
-            const result = {};
-            const items = fs.readdirSync(dir);
-
-            items.forEach(item => {
-              const itemPath = path.join(dir, item);
-              const stat = fs.statSync(itemPath);
-
-              if (stat.isDirectory()) {
-                result[item] = generatePayloadsJson(itemPath);
-              } else if (stat.isFile() && item.endsWith('.txt')) {
-                const payloadName = path.basename(item, '.txt');
-                const payloadContents = fs.readFileSync(itemPath, 'utf-8').split('\n').filter(Boolean);
-                result[payloadName] = payloadContents;
-              }
-            });
-
-            return result;
-          };
-
-          const payloadsJson = generatePayloadsJson(payloadsDir);
-          fs.writeFileSync(outputFile, JSON.stringify(payloadsJson, null, 2));
-          console.log('Generated payloads.json');
-
-      - name: Commit and push changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add payloads.json
-          git commit -m "Update payloads.json" || echo "No changes to commit"
+          git commit -m "Auto-generate payloads.json from Payloads folder structure"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
