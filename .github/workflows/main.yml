@@ -1,90 +1,65 @@
-name: Generate Payloads JSON
+name: Update Payloads JSON
 
 on:
   push:
     paths:
-      - 'Payloads/**'  # Trigger on changes in the Payloads folder
+      - 'Payloads/**'
 
 jobs:
-  generate-json:
+  update-json:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout the code
-      uses: actions/checkout@v3
-      with:
-        # Fetch the public repository with a PAT for actions
-        token: ${{ secrets.PRO_PAT }}
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Generate payloads.json from Payloads directory
-      run: |
-        payloads_dir="Payloads"
-        output_file="payloads.json"
-        
-        # Initialize the JSON output
-        echo "{" > $output_file
-        
-        # Iterate through each category in the Payloads directory
-        first_category=true
-        for category in $(ls -d "$payloads_dir"/*/); do
-          category_name=$(basename "$category")
-          
-          # Check if we are adding more categories
-          if [ "$first_category" = true ]; then
-            first_category=false
-          else
-            echo "," >> $output_file
-          fi
-          
-          # Start the category array
-          echo "  \"$category_name\": {" >> $output_file
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # You can specify the version you need
 
-          first_subcategory=true
-          # Iterate through each subcategory inside the category
-          for subcategory in $(ls -d "$category"/*/); do
-            subcategory_name=$(basename "$subcategory")
-            
-            # Start subcategory array
-            if [ "$first_subcategory" = true ]; then
-              first_subcategory=false
-            else
-              echo "," >> $output_file
-            fi
-            echo "    \"$subcategory_name\": [" >> $output_file
-            
-            first_payload=true
-            # Iterate through each .txt file in the subcategory
-            for payload_file in "$subcategory"*.txt; do
-              if [ "$first_payload" = true ]; then
-                first_payload=false
-              else
-                echo "," >> $output_file
-              fi
+      - name: Install dependencies
+        run: |
+          npm install fs-extra
 
-              # Read the contents of the payload file
-              payload_content=$(cat "$payload_file" | sed 's/"/\\"/g' | tr '\n' ' ')
+      - name: Generate JSON from Payloads
+        run: |
+          const fs = require('fs-extra');
+          const path = require('path');
 
-              # Add the payload to the JSON array
-              echo "      \"$payload_content\"" >> $output_file
-            done
+          const payloadsDir = path.join(__dirname, 'Payloads');
+          const outputFile = path.join(__dirname, 'payloads.json');
 
-            echo "    ]," >> $output_file
-          done
+          const generatePayloadsJson = (dir) => {
+            const result = {};
+            const items = fs.readdirSync(dir);
 
-          # End the category object
-          echo "  }" >> $output_file
-        done
+            items.forEach(item => {
+              const itemPath = path.join(dir, item);
+              const stat = fs.statSync(itemPath);
 
-        echo "}" >> $output_file
+              if (stat.isDirectory()) {
+                result[item] = generatePayloadsJson(itemPath);
+              } else if (stat.isFile() && item.endsWith('.txt')) {
+                const payloadName = path.basename(item, '.txt');
+                const payloadContents = fs.readFileSync(itemPath, 'utf-8').split('\n').filter(Boolean);
+                result[payloadName] = payloadContents;
+              }
+            });
 
-    - name: Commit and push the generated payloads.json to main branch
-      run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        
-        # Add the new payloads.json file to git
-        git add payloads.json
-        git commit -m "Generate payloads.json from Payloads directory"
-        
-        # Push the generated payloads.json to the main branch
-        git push https://x-access-token:${{ secrets.PRO_PAT }}@github.com/The-Ap0stle/Payload-Generator.git main
+            return result;
+          };
+
+          const payloadsJson = generatePayloadsJson(payloadsDir);
+          fs.writeFileSync(outputFile, JSON.stringify(payloadsJson, null, 2));
+          console.log('Generated payloads.json');
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add payloads.json
+          git commit -m "Update payloads.json" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
