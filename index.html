@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payload Generator</title>
+  <style>
+    /* Dark Mode Styles */
+    body { 
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+      margin: 0;
+      padding: 0;
+    }
+    .content { padding: 20px; text-align: center; }
+
+    /* Header */
+    .header-title {
+      font-size: 2em;
+      color: #ffffff;
+      margin-top: 20px;
+    }
+    .header-subtitle {
+      font-size: 0.8em;
+      color: #03dac6;
+      margin-top: -10px;
+    }
+
+    /* Hamburger Menu */
+    .menu-bar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+    }
+    .hamburger {
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .hamburger div {
+      width: 25px;
+      height: 3px;
+      background-color: white;
+      margin: 4px;
+    }
+    .menu-items {
+      display: none;
+      background-color: #333;
+      position: absolute;
+      top: 40px; left: 10px;
+      width: 150px;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+    .menu-items a {
+      display: block;
+      color: white;
+      padding: 10px;
+      text-decoration: none;
+    }
+    .menu-items a:hover { background-color: #555; }
+
+    /* Sections */
+    .search-section, .index-section, .help-section {
+      display: none;
+    }
+    .payload-list, .index-list { max-width: 600px; margin: 20px auto; text-align: left; }
+
+    /* Dropdown Styles */
+    .dropdown { margin: 10px 0; }
+    .dropdown button {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      text-align: left;
+      cursor: pointer;
+      border: none;
+      background-color: #333;
+      color: #03dac6;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+    .dropdown-content {
+      display: none;
+      padding: 10px;
+      background-color: #424242;
+      border-radius: 5px;
+    }
+    .payload-item {
+      background: #333;
+      color: #e0e0e0;
+      padding: 5px;
+      margin-bottom: 8px;
+      border-radius: 5px;
+    }
+    /* Input Field */
+    input[type="text"] {
+      padding: 10px;
+      font-size: 1em;
+      width: 80%;
+      max-width: 600px;
+      margin: 20px 0;
+      border-radius: 5px;
+      border: 1px solid #555;
+      background-color: #1e1e1e;
+      color: #ffffff;
+    }
+    .filter-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    select {
+      padding: 10px;
+      font-size: 1em;
+      color: #ffffff;
+      background-color: #333;
+      border: 1px solid #555;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px;
+      font-size: 1em;
+      background-color: #03dac6;
+      border: none;
+      color: #121212;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover { background-color: #018786; }
+    .disabled { opacity: 0.5; pointer-events: none; }
+  </style>
+</head>
+<body>
+
+  <!-- Hamburger Menu -->
+  <div class="menu-bar">
+    <div class="hamburger" onclick="toggleMenu()">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <span>Menu</span>
+    <div id="menuItems" class="menu-items">
+      <a href="#" onclick="showSection('search')">Search</a>
+      <a href="#" onclick="showSection('index')">Index</a>
+      <a href="#" onclick="showSection('help')">Help</a>
+    </div>
+  </div>
+
+  <!-- Header Title -->
+  <div class="content">
+    <br>
+    <h1 class="header-title">- Payload Generator -</h1>
+    <p class="header-subtitle">By The Glitch</p>
+  </div>
+
+  <!-- Content Sections -->
+  <div class="content">
+    <!-- Search Section (Landing page now) -->
+    <div id="searchSection" class="search-section" style="display:block;"> <!-- Display this by default -->
+      <h1>Search for Payloads</h1>
+      <input type="text" id="searchInput" placeholder="Search Keywords..." onkeyup="filterPayloads()">
+      <div class="filter-container">
+        <select id="primaryFilter" onchange="updateSecondaryFilter()">
+          <option value="">Select Vulnerability</option>
+          <option value="sql">SQL Injection</option>
+          <option value="xss">XSS</option>
+          <option value="cmd">Command Injection</option>
+        </select>
+        <select id="secondaryFilter">
+          <option value="">Select Type</option>
+        </select>
+        <button onclick="executeSearch()">Search</button>
+      </div>
+      <div id="searchResults" class="payload-list"></div>
+    </div>
+
+    <!-- Index Section -->
+    <div id="indexSection" class="index-section">
+      <h1>Payload Index</h1>
+      <div id="indexList" class="index-list"></div>
+    </div>
+
+    <!-- Help Section -->
+    <div id="helpSection" class="help-section">
+      <h1>Help</h1>
+      <p>Use the <strong>Search</strong> feature to find specific payloads, or browse all available payloads in the <strong>Index</strong>.</p>
+    </div>
+  </div>
+
+  <script>
+    const payloadFiles = ['sql_injection.txt', 'xss.txt', 'command_injection.txt'];
+    let allPayloads = {};
+
+    // Toggle hamburger menu
+    function toggleMenu() {
+      const menuItems = document.getElementById('menuItems');
+      menuItems.style.display = menuItems.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Show specified section
+    function showSection(section) {
+      document.querySelector('.search-section').style.display = 'none';
+      document.querySelector('.index-section').style.display = 'none';
+      document.querySelector('.help-section').style.display = 'none';
+
+      if (section === 'search') document.getElementById('searchSection').style.display = 'block';
+      if (section === 'index') document.getElementById('indexSection').style.display = 'block';
+      if (section === 'help') document.getElementById('helpSection').style.display = 'block';
+
+      if (section === 'index') displayIndex();
+      document.getElementById('menuItems').style.display = 'none';  // Hide menu
+    }
+
+    // Load payloads from GitHub repository
+    async function loadPayloads() {
+      const url = 'https://YOUR_USERNAME.github.io/YOUR_REPOSITORY/payloads.json';
+      try {
+        const response = await fetch(url);
+        const payloads = await response.json();
+        allPayloads = payloads; // Store payload data in allPayloads for use in filter functions
+      } catch (error) {
+        console.error("Failed to load payloads:", error);
+      }
+    }
+    
+    document.addEventListener("DOMContentLoaded", loadPayloads);
+    
+
+    // Update Secondary Filter Options
+    function updateSecondaryFilter() {
+      const primaryFilter = document.getElementById("primaryFilter").value;
+      const secondaryFilter = document.getElementById("secondaryFilter");
+      secondaryFilter.innerHTML = "";
+
+      if (primaryFilter === "sql") {
+        secondaryFilter.innerHTML += `    
+          <option value="auth">Authentication Bypass</option>
+          <option value="error">Error Based</option>
+          <option value="time">Time Based</option>
+          <option value="union">Union Based</option>
+          <option value="generic">Generic</option>
+        `;
+        secondaryFilter.classList.remove("disabled");
+      } else if (primaryFilter === "xss") {
+        secondaryFilter.innerHTML += `    
+          <option value="stored">Stored</option>
+          <option value="reflected">Reflected</option>
+        `;
+        secondaryFilter.classList.remove("disabled");
+      } else if (primaryFilter === "cmd") {
+        secondaryFilter.innerHTML += `    
+          <option value="os">Operating System Command</option>
+        `;
+        secondaryFilter.classList.remove("disabled");
+      } else {
+        secondaryFilter.innerHTML = '<option value="">Select Type</option>';
+        secondaryFilter.classList.add("disabled");
+      }
+    }
+
+    // Filter Payloads
+    function filterPayloads() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const results = [];
+
+      for (const category in allPayloads) {
+        const filtered = allPayloads[category].filter(payload => payload.toLowerCase().includes(query));
+        if (filtered.length > 0) results.push(...filtered);
+      }
+
+      displayResults(results);
+    }
+
+    // Display Results
+    function displayResults(results) {
+      const resultsContainer = document.getElementById('searchResults');
+      resultsContainer.innerHTML = results.map(result => `<div class="payload-item">${result}</div>`).join('');
+    }
+
+    // Display Index
+    function displayIndex() {
+      const indexList = document.getElementById('indexList');
+      indexList.innerHTML = payloadFiles.map(file => `<div class="payload-item">${file.replace('.txt', '')}</div>`).join('');
+    }
+
+    // Initialize the page
+    document.addEventListener("DOMContentLoaded", () => {
+      loadPayloads();
+      showSection('search');  // Show the search section by default
+    });
+  </script>
+</body>
+</html>
