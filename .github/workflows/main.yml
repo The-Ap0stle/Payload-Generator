@@ -1,0 +1,90 @@
+name: Generate Payloads JSON
+
+on:
+  push:
+    paths:
+      - 'Payloads/**'  # Trigger on changes in the Payloads folder
+
+jobs:
+  generate-json:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v3
+      with:
+        # Fetch the public repository with a PAT for actions
+        token: ${{ secrets.PRO_PAT }}
+
+    - name: Generate payloads.json from Payloads directory
+      run: |
+        payloads_dir="Payloads"
+        output_file="payloads.json"
+        
+        # Initialize the JSON output
+        echo "{" > $output_file
+        
+        # Iterate through each category in the Payloads directory
+        first_category=true
+        for category in $(ls -d "$payloads_dir"/*/); do
+          category_name=$(basename "$category")
+          
+          # Check if we are adding more categories
+          if [ "$first_category" = true ]; then
+            first_category=false
+          else
+            echo "," >> $output_file
+          fi
+          
+          # Start the category array
+          echo "  \"$category_name\": {" >> $output_file
+
+          first_subcategory=true
+          # Iterate through each subcategory inside the category
+          for subcategory in $(ls -d "$category"/*/); do
+            subcategory_name=$(basename "$subcategory")
+            
+            # Start subcategory array
+            if [ "$first_subcategory" = true ]; then
+              first_subcategory=false
+            else
+              echo "," >> $output_file
+            fi
+            echo "    \"$subcategory_name\": [" >> $output_file
+            
+            first_payload=true
+            # Iterate through each .txt file in the subcategory
+            for payload_file in "$subcategory"*.txt; do
+              if [ "$first_payload" = true ]; then
+                first_payload=false
+              else
+                echo "," >> $output_file
+              fi
+
+              # Read the contents of the payload file
+              payload_content=$(cat "$payload_file" | sed 's/"/\\"/g' | tr '\n' ' ')
+
+              # Add the payload to the JSON array
+              echo "      \"$payload_content\"" >> $output_file
+            done
+
+            echo "    ]," >> $output_file
+          done
+
+          # End the category object
+          echo "  }" >> $output_file
+        done
+
+        echo "}" >> $output_file
+
+    - name: Commit and push the generated payloads.json to main branch
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+        # Add the new payloads.json file to git
+        git add payloads.json
+        git commit -m "Generate payloads.json from Payloads directory"
+        
+        # Push the generated payloads.json to the main branch
+        git push https://x-access-token:${{ secrets.PRO_PAT }}@github.com/The-Ap0stle/Payload-Generator.git main
