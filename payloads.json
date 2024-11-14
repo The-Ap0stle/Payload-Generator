@@ -5250,7 +5250,6 @@
       "and (select substring(@@version,3,1))='X'"
     ],
     "Time Based": [
-      "# from wapiti",
       "sleep(5)#",
       "1 or sleep(5)#",
       "\" or sleep(5)#",
