@@ -57,7 +57,7 @@ function updateSecondaryFilter() {
 
   // Function to fetch and load payloads from JSON file
   function fetchPayloads() {
-    fetch("https://raw.githubusercontent.com/The-Ap0stle/Payload-Generator/main/payloads.json")
+    fetch("payloads.json")
       .then(response => response.json())
       .then(data => {
         allPayloads = data;
