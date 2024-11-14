@@ -66,10 +66,10 @@
     .menu-items a:hover { background-color: #555; }
 
     /* Sections */
-    .search-section, .index-section, .help-section {
+    .help-section {
       display: none;
     }
-    .payload-list, .index-list { max-width: 600px; margin: 20px auto; text-align: left; }
+    .payload-list { max-width: 600px; margin: 20px auto; text-align: left; }
 
     /* Dropdown Styles */
     .dropdown { margin: 10px 0; }
@@ -134,7 +134,27 @@
       border-radius: 5px;
     }
     button:hover { background-color: #018786; }
+    .error-message {
+      color: #ff5722;
+      margin-top: 10px;
+    }
+    button:hover { background-color: #018786; }
     .disabled { opacity: 0.5; pointer-events: none; }
+    
+    /* Updated Copy Button */
+    #copyButton {
+      display: none;
+      position: relative;
+      left: -300px; /* Adjusted for alignment with the left of the search input */
+      top: 10px;
+      padding: 8px;
+      font-size: 0.8em; /* Reduced size */
+      background-color: #03dac6;
+      color: #121212;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
   </style>
 </head>
 <body>
@@ -146,17 +166,16 @@
       <div></div>
       <div></div>
     </div>
-    <span>Menu</span>
+    <span>MENU</span>
     <div id="menuItems" class="menu-items">
       <a href="#" onclick="showSection('search')">Search</a>
-      <a href="#" onclick="showSection('index')">Index</a>
       <a href="#" onclick="showSection('help')">Help</a>
     </div>
   </div>
 
   <!-- Header Title -->
   <div class="content">
-    <br>
+  <br>
     <h1 class="header-title">- Payload Generator -</h1>
     <p class="header-subtitle">By The Glitch</p>
   </div>
@@ -164,38 +183,38 @@
   <!-- Content Sections -->
   <div class="content">
     <!-- Search Section -->
-    <div id="searchSection" class="search-section" style="display:block;">
+    <div id="searchSection" class="search-section">
       <h1>Search for Payloads</h1>
       <input type="text" id="searchInput" placeholder="Search Keywords..." onkeyup="filterPayloads()">
       <div class="filter-container">
         <select id="primaryFilter" onchange="updateSecondaryFilter()">
-          <option value="">Select Category</option>
+          <option value="">Select Vulnerability</option>
         </select>
         <select id="secondaryFilter">
-          <option value="">Select Payload</option>
+          <option value="">Select Type</option>
         </select>
         <button onclick="executeSearch()">Search</button>
       </div>
+      <div id="error-message" class="error-message"></div>
+      <button id="copyButton" onclick="copyPayloads()">📄</button>
       <div id="searchResults" class="payload-list"></div>
-    </div>
-
-    <!-- Index Section -->
-    <div id="indexSection" class="index-section">
-      <h1>Payload Index</h1>
-      <div id="indexList" class="index-list"></div>
     </div>
 
     <!-- Help Section -->
     <div id="helpSection" class="help-section">
       <h1>Help</h1>
-      <p>Use the <strong>Search</strong> feature to find specific payloads, or browse all available payloads in the <strong>Index</strong>.</p>
+      <p>Use the <strong>Search</strong> feature to find specific payloads.</p>
     </div>
   </div>
 
   <script>
-    const allPayloads = {};
-    const baseUrl = 'https://api.github.com/repos/YOUR_USERNAME/YOUR_REPOSITORY/contents/Payloads/';
-
+    
+    document.addEventListener("DOMContentLoaded", () => {
+        fetchPayloads();
+      });
+    
+      let allPayloads = {};
+    
     // Toggle hamburger menu
     function toggleMenu() {
       const menuItems = document.getElementById('menuItems');
@@ -205,163 +224,116 @@
     // Show specified section
     function showSection(section) {
       document.querySelector('.search-section').style.display = 'none';
-      document.querySelector('.index-section').style.display = 'none';
       document.querySelector('.help-section').style.display = 'none';
 
       if (section === 'search') document.getElementById('searchSection').style.display = 'block';
-      if (section === 'index') document.getElementById('indexSection').style.display = 'block';
+     
       if (section === 'help') document.getElementById('helpSection').style.display = 'block';
 
-      if (section === 'index') displayIndex();
-      document.getElementById('menuItems').style.display = 'none';  // Hide menu
+      
     }
 
-    // Load payloads and categories dynamically from GitHub
-    async function loadPayloads() {
-      const headers = {
-        'Authorization': 'token YOUR_PERSONAL_ACCESS_TOKEN'
-      };
-
-      const response = await fetch(baseUrl, { headers });
-      const directories = await response.json();
-
-      for (const dir of directories) {
-        if (dir.type === 'dir') {
-          allPayloads[dir.name] = await loadCategoryPayloads(dir.name);
-        }
-      }
-
-      updateFilters();
+    // Populate Primary Filter Options
+    function populatePrimaryFilter() {
+        const primaryFilter = document.getElementById("primaryFilter");
+        primaryFilter.innerHTML = '<option value="">Select Vulnerability</option>'; // Reset options
+        
+        Object.keys(allPayloads).forEach(vulnerabilityType => {
+            const option = document.createElement("option");
+            option.value = vulnerabilityType;
+            option.textContent = vulnerabilityType;
+            primaryFilter.appendChild(option);
+        });
     }
 
-    // Load payloads within a category
-    async function loadCategoryPayloads(category) {
-      const headers = {
-        'Authorization': 'token YOUR_PERSONAL_ACCESS_TOKEN'
-      };
-
-      const categoryUrl = `${baseUrl}${category}/`;
-      const response = await fetch(categoryUrl, { headers });
-      const files = await response.json();
-
-      const payloads = {};
-      for (const file of files) {
-        if (file.type === 'file') {
-          const contentResponse = await fetch(file.download_url, { headers });
-          const content = await contentResponse.text();
-          payloads[file.name] = content.split('\n').filter(line => line.trim() !== '');
-        }
-      }
-
-      return payloads;
-    }
-
-    // Update the filters based on loaded payloads
-    function updateFilters() {
-      const primaryFilter = document.getElementById('primaryFilter');
-      const secondaryFilter = document.getElementById('secondaryFilter');
-
-      primaryFilter.innerHTML = '<option value="">Select Category</option>';
-      for (const category in allPayloads) {
-        const option = document.createElement('option');
-        option.value = category;
-        option.textContent = category;
-        primaryFilter.appendChild(option);
-      }
-
-      primaryFilter.disabled = false;
-    }
-
-    // Update secondary filter based on selected primary filter
+    // Update Secondary Filter Options
     function updateSecondaryFilter() {
-      const primaryFilter = document.getElementById('primaryFilter');
-      const secondaryFilter = document.getElementById('secondaryFilter');
-
-      const selectedCategory = primaryFilter.value;
-      if (!selectedCategory) return;
-
-      secondaryFilter.innerHTML = '<option value="">Select Payload</option>';
-      const payloadFiles = allPayloads[selectedCategory];
-
-      for (const file in payloadFiles) {
-        const option = document.createElement('option');
-        option.value = file;
-        option.textContent = file;
-        secondaryFilter.appendChild(option);
-      }
-
-      secondaryFilter.disabled = false;
-    }
-
-    // Filter payloads based on search input
-    function filterPayloads() {
-      const input = document.getElementById("searchInput").value.toLowerCase();
-      const resultsContainer = document.getElementById("searchResults");
-      resultsContainer.innerHTML = "";
-
-      for (const category in allPayloads) {
-        const filtered = [];
-        for (const file in allPayloads[category]) {
-          const payloads = allPayloads[category][file];
-          const filteredPayloads = payloads.filter(payload => payload.toLowerCase().includes(input));
-          if (filteredPayloads.length > 0) {
-            filtered.push({ file, payloads: filteredPayloads });
-          }
-        }
-
-        if (filtered.length > 0) {
-          const categoryTitle = document.createElement('h3');
-          categoryTitle.textContent = category.replace('.txt', '').toUpperCase();
-          resultsContainer.appendChild(categoryTitle);
-
-          filtered.forEach(item => {
-            const fileTitle = document.createElement('h4');
-            fileTitle.textContent = item.file;
-            resultsContainer.appendChild(fileTitle);
-            item.payloads.forEach(payload => {
-              const payloadItem = document.createElement('div');
-              payloadItem.classList.add('payload-item');
-              payloadItem.textContent = payload;
-              resultsContainer.appendChild(payloadItem);
-            });
+        const primaryFilter = document.getElementById("primaryFilter").value;
+        const secondaryFilter = document.getElementById("secondaryFilter");
+        secondaryFilter.innerHTML = "";
+      
+        if (primaryFilter && allPayloads[primaryFilter]) {
+          Object.keys(allPayloads[primaryFilter]).forEach(subType => {
+            const option = document.createElement("option");
+            option.value = subType;
+            option.textContent = subType;
+            secondaryFilter.appendChild(option);
           });
+          secondaryFilter.classList.remove("disabled");
+        } else {
+          secondaryFilter.innerHTML = '<option>No Options</option>';
+          secondaryFilter.classList.add("disabled");
         }
+      } 
+    
+      // Function to fetch and load payloads from JSON file
+      function fetchPayloads() {
+        fetch("https://raw.githubusercontent.com/The-Ap0stle/Payload-Generator/main/payloads.json")
+          .then(response => response.json())
+          .then(data => {
+            allPayloads = data;
+            populatePrimaryFilter(); // Populate primary filter options after loading data
+          })
+          .catch(error => console.error("Error loading payloads:", error));
       }
-    }
-
-    // Execute search function
-    function executeSearch() {
-      filterPayloads();
-    }
-
-    // Display index of all payloads
-    function displayIndex() {
-      const indexList = document.getElementById('indexList');
-      indexList.innerHTML = '';
-
-      for (const category in allPayloads) {
-        const categoryTitle = document.createElement('h3');
-        categoryTitle.textContent = category.toUpperCase();
-        indexList.appendChild(categoryTitle);
-
-        for (const file in allPayloads[category]) {
-          const fileTitle = document.createElement('h4');
-          fileTitle.textContent = file;
-          indexList.appendChild(fileTitle);
-
-          allPayloads[category][file].forEach(payload => {
-            const payloadItem = document.createElement('div');
-            payloadItem.classList.add('payload-item');
+      
+      // Executes search based on filters and optional keyword
+      function executeSearch() {
+        const primaryFilter = document.getElementById("primaryFilter").value;
+        const secondaryFilter = document.getElementById("secondaryFilter").value;
+        const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+        const resultsContainer = document.getElementById("searchResults");
+        const errorMessage = document.getElementById("error-message");
+        const copyButton = document.getElementById("copyButton");
+        
+        errorMessage.textContent = "";
+        resultsContainer.innerHTML = "";
+        copyButton.style.display = "none";
+  
+        if (keyword && (!primaryFilter || !secondaryFilter)) {
+          errorMessage.textContent = "Please set filters to search with keywords.";
+          return;
+        }
+        
+        if (!primaryFilter || !secondaryFilter) {
+          errorMessage.textContent = "Please set filters to search.";
+          return;
+        }
+        
+        let filteredPayloads = allPayloads[primaryFilter][secondaryFilter];
+        
+        // Filter by keyword if provided
+        if (keyword) {
+          filteredPayloads = filteredPayloads.filter(payload => payload.toLowerCase().includes(keyword));
+        }
+        
+        // Display filtered payloads or no results message
+        if (filteredPayloads.length > 0) {
+          filteredPayloads.forEach(payload => {
+            const payloadItem = document.createElement("div");
+            payloadItem.className = "payload-item";
             payloadItem.textContent = payload;
-            indexList.appendChild(payloadItem);
+            resultsContainer.appendChild(payloadItem);
           });
+          copyButton.style.display = "inline-block";
+        } else {
+          resultsContainer.innerHTML = "<p>No payloads found.</p>";
         }
       }
-    }
 
-    // Initialize
-    loadPayloads();
+      function copyPayloads() {
+        const resultsContainer = document.getElementById("searchResults");
+        const payloadItems = resultsContainer.getElementsByClassName("payload-item");
+  
+        if (payloadItems.length === 0) return;
+  
+        const payloadText = Array.from(payloadItems).map(item => item.textContent).join("\n");
+  
+        navigator.clipboard.writeText(payloadText).catch(err => {
+          console.error("Error copying payloads:", err);
+        });
+      }  
+
   </script>
-
 </body>
 </html>
