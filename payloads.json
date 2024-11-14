@@ -4,7 +4,6 @@
   },
   "Subdirectories": {
     "Common": [
-      "@",
       "ADM",
       "ADMIN",
       "ADMON",
