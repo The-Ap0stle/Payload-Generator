@@ -1,290 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PG-Gl!tch</title>
-    <style>
-      /* Global Dark Mode Styles */
-body {
-  font-family: 'Inter', Arial, sans-serif; /* Added a modern font */
-  background-image: url('wp1.jpg'); /* Path to the background image */
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
-  background-repeat: no-repeat;
-  color: #e0e0e0;
-  margin: 0;
-  padding: 0;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-a {
-  color: #03dac6;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-a:hover {
-  color: #018786;
-}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PG-Gl!tch</title>
+  <style>
+    /* Global Dark Mode Styles */
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background-image: url('wp1.jpg');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #e0e0e0;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a {
+      color: #03dac6;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    a:hover {
+      color: #018786;
+    }
 
-/* Content Container */
-.content {
-  padding: 20px;
-  text-align: center;
-  max-width: 900px;
-  margin: 0 auto;
-}
+    /* Content Container */
+    .content {
+      padding: 20px;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
 
-/* Header Styles */
-.header-title {
-  font-size: 2.5em;
-  color: #ffffff;
-  margin-top: 30px;
-}
-.header-subtitle {
-  font-size: 1em;
-  color: #03dac6;
-  margin-top: -8px;
-  letter-spacing: 1px;
-}
+    /* Header Styles */
+    .header-title {
+      font-size: 2.5em;
+      color: #ffffff;
+      margin-top: 30px;
+    }
+    .header-subtitle {
+      font-size: 1em;
+      color: #03dac6;
+      margin-top: -8px;
+      letter-spacing: 1px;
+    }
 
-/* Hamburger Menu 
-.menu-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 20%;
-  background-color: #2c2c2c;
-  color: white;
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  z-index: 10;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-.hamburger {
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.hamburger div {
-  width: 25px;
-  height: 3px;
-  background-color: #ffffff;
-  border-radius: 3px;
-  transition: transform 0.3s;
-}
-.menu-items {
-  display: none;
-  background-color: #2c2c2c;
-  position: absolute;
-  top: 50px;
-  right: 10px;
-  width: 200px;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-.menu-items a {
-  display: block;
-  padding: 12px;
-  border-bottom: 1px solid #424242;
-  transition: background-color 0.3s;
-}
-.menu-items a:hover {
-  background-color: #555;
-} */
+    /* Sections & Payload List */
+    .payload-list {
+      max-width: 800px;
+      margin: 30px auto;
+      text-align: left;
+      background-color: #252525;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    .payload-item {
+      background: #333;
+      color: #e0e0e0;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+      word-wrap: break-word;
+    }
+    .payload-item:hover {
+      background-color: #404040;
+    }
 
-/* Sections & Payload List */
-.help-section {
-  display: none;
-}
-.payload-list {
-  max-width: 800px;
-  margin: 30px auto;
-  text-align: left;
-  background-color: #252525;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-.payload-item {
-  background: #333;
-  color: #e0e0e0;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  transition: background-color 0.3s;
-  word-wrap: break-word;
-}
-.payload-item:hover {
-  background-color: #404040;
-}
-
-/* Dropdown Styles */
-.dropdown {
-  margin: 15px 0;
-}
-.dropdown button {
-  width: 100%;
-  padding: 12px;
-  font-size: 1em;
-  text-align: left;
-  cursor: pointer;
-  border: none;
-  background-color: #333;
-  color: #03dac6;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
-.dropdown button:hover {
-  background-color: #555;
-}
-.dropdown-content {
-  display: none;
-  padding: 15px;
-  background-color: #424242;
-  border-radius: 8px;
-}
-
-/* Input Field & Filter Container */
-input[type="text"] {
-  padding: 12px;
-  font-size: 1em;
-  width: 80%;
-  max-width: 600px;
-  margin: 20px 0;
-  border-radius: 8px;
-  border: 1px solid #555;
-  background-color: #1e1e1e;
-  color: #ffffff;
-  outline: none;
-  transition: border-color 0.3s;
-}
-input[type="text"]:focus {
-  border-color: #03dac6;
-}
-.filter-container {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-select {
-  padding: 12px;
-  font-size: 1em;
-  color: #ffffff;
-  background-color: #333;
-  border: 1px solid #555;
-  border-radius: 5px;
-}
-button {
-  padding: 12px;
-  font-size: 1em;
-  background-color: #03dac6;
-  border: none;
-  color: #121212;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s, transform 0.2s;
-}
-button:hover {
-  background-color: #018786;
-  transform: translateY(-2px);
-}
-button:active {
-  transform: translateY(0);
-}
-button.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-/* Copy Button */
-#copyButton {
+    /* Dropdown Styles */
+    .dropdown {
+      margin: 15px 0;
+    }
+    .dropdown button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1em;
+      text-align: left;
+      cursor: pointer;
+      border: none;
+      background-color: #333;
+      color: #03dac6;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    .dropdown button:hover {
+      background-color: #555;
+    }
+    .dropdown-content {
       display: none;
-      position: relative;
-      left: -400px; /* Adjusted for alignment with the left of the search input */
-      top: 10px;
+      padding: 15px;
+      background-color: #424242;
+      border-radius: 8px;
+    }
+
+    /* Input Field & Filter Container */
+    input[type="text"] {
+      padding: 12px;
+      font-size: 1em;
+      width: 80%;
+      max-width: 600px;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 1px solid #555;
+      background-color: #1e1e1e;
+      color: #ffffff;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    input[type="text"]:focus {
+      border-color: #03dac6;
+    }
+    .filter-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    select, button {
+      padding: 12px;
+      font-size: 1em;
+      background-color: #333;
+      border: none;
+      color: #03dac6;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background-color: #018786;
+      transform: translateY(-2px);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+
+    /* Copy Button */
+    #copyButton {
+      display: none;
       padding: 8px;
-      font-size: 0.8em; /* Reduced size */
+      font-size: 0.8em;
       background-color: #03dac6;
       color: #121212;
       border-radius: 5px;
       cursor: pointer;
     }
-#copyButton:hover {
-  background-color: #018786;
-}
+    #copyButton:hover {
+      background-color: #018786;
+    }
 
-/* Error Message */
-.error-message {
-  color: #ff5722;
-  margin-top: 10px;
-  font-weight: bold;
-}
+    /* Error Message */
+    .error-message {
+      color: #ff5722;
+      margin-top: 10px;
+      font-weight: bold;
+    }
 
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header-title {
+        font-size: 2em;
+      }
+      input[type="text"] {
+        width: 95%;
+      }
+      select, button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header Title -->
+  <div class="content">
+    <br />
+    <h1 class="header-title">- Payload Generator -</h1>
+    <p class="header-subtitle">From KN@SJ</p>
+  </div>
 
-    </style>
-  </head>
-  <body>
-    <!-- Hamburger Menu 
-    <div class="menu-bar">
-      <div class="hamburger" onclick="toggleMenu()">
-        <div></div>
-        <div></div>
-        <div></div>
+  <!-- Content Sections -->
+  <div class="content">
+    <!-- Search Section -->
+    <div id="searchSection" class="search-section">
+      <h1>Search for Payloads</h1>
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search Keywords..."
+        onkeyup="filterPayloads()"
+      />
+      <div class="filter-container">
+        <select id="primaryFilter" onchange="updateSecondaryFilter()">
+          <option value="">Select Vulnerability</option>
+        </select>
+        <select id="secondaryFilter">
+          <option value="">Select Type</option>
+        </select>
+        <button onclick="executeSearch()">Search</button>
       </div>
-      <span>MENU</span>
-      <div id="menuItems" class="menu-items">
-        <a href="#" onclick="showSection('search')">Search</a>
-        <a href="#" onclick="showSection('help')">Help</a>
-      </div>
-    </div> -->
-
-    <!-- Header Title -->
-    <div class="content">
-      <br />
-      <h1 class="header-title">- Payload Generator -</h1>
-      <p class="header-subtitle">From KN@SJ</p>
+      <div id="error-message" class="error-message"></div>
+      <button id="copyButton" onclick="copyPayloads()">📄</button>
+      <div id="searchResults" class="payload-list"></div>
     </div>
+  </div>
 
-    <!-- Content Sections -->
-    <div class="content">
-      <!-- Search Section -->
-      <div id="searchSection" class="search-section">
-        <h1>Search for Payloads</h1>
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Search Keywords..."
-          onkeyup="filterPayloads()"
-        />
-        <div class="filter-container">
-          <select id="primaryFilter" onchange="updateSecondaryFilter()">
-            <option value="">Select Vulnerability</option>
-          </select>
-          <select id="secondaryFilter">
-            <option value="">Select Type</option>
-          </select>
-          <button onclick="executeSearch()">Search</button>
-        </div>
-        <div id="error-message" class="error-message"></div>
-        <button id="copyButton" onclick="copyPayloads()">📄</button>
-        <div id="searchResults" class="payload-list"></div>
-      </div>
-
-      <!-- Help Section -->
-      <div id="helpSection" class="help-section">
-        <h1>Help</h1>
-        <p>
-          Use the <strong>Search</strong> feature to find specific payloads.
-        </p>
-      </div>
-    </div>
-
-    <script src="execute.js"></script>
-  </body>
+  <script src="execute.js"></script>
+</body>
 </html>
