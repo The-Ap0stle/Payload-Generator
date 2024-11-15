@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PG-KN@SJ</title>
+  <title>PG-Gl!tch</title>
   <style>
     /* Global Dark Mode Styles */
     body {
@@ -72,32 +72,6 @@
       background-color: #404040;
     }
 
-    /* Dropdown Styles */
-    .dropdown {
-      margin: 15px 0;
-    }
-    .dropdown button {
-      width: 100%;
-      padding: 12px;
-      font-size: 1em;
-      text-align: left;
-      cursor: pointer;
-      border: none;
-      background-color: #333;
-      color: #03dac6;
-      border-radius: 5px;
-      transition: background-color 0.3s;
-    }
-    .dropdown button:hover {
-      background-color: #555;
-    }
-    .dropdown-content {
-      display: none;
-      padding: 15px;
-      background-color: #424242;
-      border-radius: 8px;
-    }
-
     /* Input Field & Filter Container */
     input[type="text"] {
       padding: 12px;
@@ -122,30 +96,38 @@
       gap: 12px;
       margin-bottom: 20px;
     }
-    select, button {
+    select {
       padding: 12px;
       font-size: 1em;
+      color: #ffffff;
       background-color: #333;
+      border: 1px solid #555;
+      border-radius: 5px;
+    }
+    .search-button {
+      padding: 12px;
+      font-size: 1em;
+      background-color: #03dac6;
       border: none;
-      color: #03dac6;
+      color: #121212;
       cursor: pointer;
       border-radius: 5px;
       transition: background-color 0.3s, transform 0.2s;
     }
-    button:hover {
+    .search-button:hover {
       background-color: #018786;
       transform: translateY(-2px);
     }
-    button:active {
+    .search-button:active {
       transform: translateY(0);
     }
 
     /* Copy Button */
     #copyButton {
       display: none;
+      position: relative;
       left: -400px; /* Adjusted for alignment with the left of the search input */
       top: 10px;
-      padding: 8px;
       padding: 8px;
       font-size: 0.8em;
       background-color: #03dac6;
@@ -172,7 +154,7 @@
       input[type="text"] {
         width: 95%;
       }
-      select, button {
+      select, .search-button {
         width: 100%;
       }
     }
@@ -204,7 +186,7 @@
         <select id="secondaryFilter">
           <option value="">Select Type</option>
         </select>
-        <button onclick="executeSearch()">Search</button>
+        <button class="search-button" onclick="executeSearch()">Search</button>
       </div>
       <div id="error-message" class="error-message"></div>
       <button id="copyButton" onclick="copyPayloads()">📄</button>
