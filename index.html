@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PG-Gl!tch</title>
+  <title>PG-KN@SJ</title>
   <style>
     /* Global Dark Mode Styles */
     body {
@@ -49,29 +49,6 @@
       letter-spacing: 1px;
     }
 
-    /* Sections & Payload List */
-    .payload-list {
-      max-width: 800px;
-      margin: 30px auto;
-      text-align: left;
-      background-color: #252525;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    }
-    .payload-item {
-      background: #333;
-      color: #e0e0e0;
-      padding: 12px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      transition: background-color 0.3s;
-      word-wrap: break-word;
-    }
-    .payload-item:hover {
-      background-color: #404040;
-    }
-
     /* Input Field & Filter Container */
     input[type="text"] {
       padding: 12px;
@@ -109,7 +86,7 @@
       font-size: 1em;
       background-color: #03dac6;
       border: none;
-      color: #121212;
+      color: #ffffff;
       cursor: pointer;
       border-radius: 5px;
       transition: background-color 0.3s, transform 0.2s;
@@ -126,7 +103,7 @@
     #copyButton {
       display: none;
       position: relative;
-      left: -400px; /* Adjusted for alignment with the left of the search input */
+      left: -400px; /* Default for desktop */
       top: 10px;
       padding: 8px;
       font-size: 0.8em;
@@ -156,6 +133,12 @@
       }
       select, .search-button {
         width: 100%;
+      }
+      #copyButton {
+        display: inline-block;
+        position: relative;
+        left: 0;
+        top: 20px; /* Adjust for mobile view */
       }
     }
   </style>
