@@ -4,24 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let allPayloads = {};
 
-// Toggle hamburger menu
-function toggleMenu() {
-  const menuItems = document.getElementById('menuItems');
-  menuItems.style.display = menuItems.style.display === 'block' ? 'none' : 'block';
-}
-
-// Show specified section
-function showSection(section) {
-  document.querySelector('.search-section').style.display = 'none';
-  document.querySelector('.help-section').style.display = 'none';
-
-  if (section === 'search') document.getElementById('searchSection').style.display = 'block';
- 
-  if (section === 'help') document.getElementById('helpSection').style.display = 'block';
-
-  
-}
-
 // Populate Primary Filter Options
 function populatePrimaryFilter() {
     const primaryFilter = document.getElementById("primaryFilter");
@@ -83,7 +65,6 @@ function updateSecondaryFilter() {
       errorMessage.textContent = "Please set filters to search with keywords.";
       return;
     }
-    
     if (!primaryFilter || !secondaryFilter) {
       errorMessage.textContent = "Please set filters to search.";
       return;
