@@ -53,6 +53,9 @@ jobs:
           
           # Run the Python script to generate payloads.json
           python3 generate_payloads_json.py
+          
+          # Remove the temporary script
+          rm generate_payloads_json.py
 
       - name: Display the generated payloads.json (for debugging purposes)
         run: cat payloads.json
