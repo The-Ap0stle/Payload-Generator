@@ -96,7 +96,7 @@ function updateSecondaryFilter() {
         payload
           .replace(/\[LHOST\]/g, lhostInput || "[LHOST]")
           .replace(/\[LPORT\]/g, lportInput || "[LPORT]")
-          .replace(/\[FILENAME\]/g, filenameInput || "[FILENAME]")
+          .replace(/\[FILE\]/g, filenameInput || "[FILENAME]")
       );
     }
     
