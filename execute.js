@@ -21,9 +21,10 @@ function populatePrimaryFilter() {
 function updateSecondaryFilter() {
     const primaryFilter = document.getElementById("primaryFilter").value;
     const secondaryFilter = document.getElementById("secondaryFilter");
+    const dynamicInputs = document.getElementById("dynamicInputs");
     secondaryFilter.innerHTML = "";
 
-    if (primaryFilter === "Reverse Shell") {
+    if (primaryFilter === "Reverse Shell" || primaryFilter === "File Transfer") {
       dynamicInputs.style.display = "flex";
     } else {
       dynamicInputs.style.display = "none";
