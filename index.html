@@ -35,11 +35,27 @@
         <button class="search-button" onclick="executeSearch()">Search</button>
       </div>
       <!-- New Sections -->
+      <!-- Dynamic Input Fields -->
       <div id="dynamicInputs" style="display: none;">
-        <input type="text" id="lhostInput" placeholder="LHOST" style="margin-right: 10px;" />
-        <input type="text" id="lportInput" placeholder="LPORT" style="margin-right: 10px;" />
-        <input type="text" id="filenameInput" placeholder="Filename" />
-      </div>   
+        <input
+          type="text"
+          id="lhostInput"
+          placeholder="LHOST"
+          style="margin-right: 10px;"
+        />
+        <input
+          type="text"
+          id="lportInput"
+          placeholder="LPORT"
+          style="margin-right: 10px;"
+        />
+        <input
+          type="text"
+          id="filenameInput"
+          placeholder="Filename"
+          style="display: none;"
+        />
+      </div> 
       <!-- ENew Sections -->   
       <div id="error-message" class="error-message"></div>
       <button id="copyButton" onclick="copyPayloads()">📄</button>

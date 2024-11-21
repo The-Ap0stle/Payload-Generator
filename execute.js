@@ -22,12 +22,16 @@ function updateSecondaryFilter() {
     const primaryFilter = document.getElementById("primaryFilter").value;
     const secondaryFilter = document.getElementById("secondaryFilter");
     const dynamicInputs = document.getElementById("dynamicInputs");
+    const filenameInput = document.getElementById("filenameInput");
     secondaryFilter.innerHTML = "";
+    dynamicInputs.style.display = "none";
+    filenameInput.style.display = "none";
 
-    if (primaryFilter === "Reverse Shell" || primaryFilter === "File Transfer") {
+    if (primaryFilter === "Reverse Shell") {
       dynamicInputs.style.display = "flex";
-    } else {
-      dynamicInputs.style.display = "none";
+    } else if (primaryFilter === "File Transfer") {
+      dynamicInputs.style.display = "flex";
+      filenameInput.style.display = "inline-block";
     }
   
     if (primaryFilter && allPayloads[primaryFilter]) {
@@ -83,7 +87,11 @@ function updateSecondaryFilter() {
     let filteredPayloads = allPayloads[primaryFilter][secondaryFilter];
 
      // Replace placeholders if inputs are provided
-     if (primaryFilter === "Reverse Shell" || primaryFilter === "File Transfer") {
+     if (primaryFilter === "Reverse Shell") {
+      filteredPayloads = filteredPayloads.map((payload) =>
+        payload.replace(/\[LHOST\]/g, lhostInput || "[LHOST]").replace(/\[LPORT\]/g, lportInput || "[LPORT]")
+      );
+    } else if (primaryFilter === "File Transfer") {
       filteredPayloads = filteredPayloads.map((payload) =>
         payload
           .replace(/\[LHOST\]/g, lhostInput || "[LHOST]")
