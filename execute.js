@@ -64,6 +64,7 @@ function updateSecondaryFilter() {
     const copyButton = document.getElementById("copyButton");
     const lhostInput = document.getElementById("lhostInput").value; // Get the value
     const lportInput = document.getElementById("lportInput").value;
+    const filenameInput = document.getElementById("filenameInput").value;
     
     errorMessage.textContent = "";
     resultsContainer.innerHTML = "";
@@ -81,11 +82,14 @@ function updateSecondaryFilter() {
     let filteredPayloads = allPayloads[primaryFilter][secondaryFilter];
 
      // Replace placeholders if inputs are provided
-  if (primaryFilter === "Reverse Shell" && lhostInput && lportInput) {
-    filteredPayloads = filteredPayloads.map((payload) =>
-      payload.replace(/\[LHOST\]/g, lhostInput).replace(/\[LPORT\]/g, lportInput)
-    );
-  }
+     if (primaryFilter === "Reverse Shell" || primaryFilter === "File Transfer") {
+      filteredPayloads = filteredPayloads.map((payload) =>
+        payload
+          .replace(/\[LHOST\]/g, lhostInput || "[LHOST]")
+          .replace(/\[LPORT\]/g, lportInput || "[LPORT]")
+          .replace(/\[FILENAME\]/g, filenameInput || "[FILENAME]")
+      );
+    }
     
     // Filter by keyword if provided
     if (keyword) {
