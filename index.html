@@ -26,7 +26,7 @@
         placeholder="Search Keywords..."
       />
       <div class="filter-container">
-        <select id="primaryFilter" onchange="updateSecondaryFilter()">
+        <select id="primaryFilter" onchange="updateFilters()">
           <option value="">Select Vulnerability</option>
         </select>
         <select id="secondaryFilter">
@@ -35,6 +35,22 @@
         <button class="search-button" onclick="executeSearch()">Search</button>
       </div>
       <!-- New Sections -->
+      <div id="msfvenomInputs" style="display: none; margin-top: 10px;">
+        <input type="text" id="lhostInput" placeholder="LHOST" />
+        <input type="text" id="lportInput" placeholder="LPORT" />
+        <input type="text" id="filenameInput" placeholder="Output Filename" />
+        <select id="payloadDropdown" placeholder="Select Payload"></select>
+        <select id="formatDropdown" placeholder="Select Format"></select>
+        <select id="encoderDropdown" placeholder="Select Encoder"></select>
+        <input
+          type="number"
+          id="iterationsInput"
+          placeholder="Iterations"
+          style="width: 80px;"
+        />
+      </div>
+      <!-- ENew Sections -->
+
       <!-- Dynamic Input Fields -->
       <div id="dynamicInputs" style="display: none;">
         <input
@@ -56,7 +72,7 @@
           style="display: none;"
         />
       </div> 
-      <!-- ENew Sections -->   
+         
       <div id="error-message" class="error-message"></div>
       <button id="copyButton" onclick="copyPayloads()">📄</button>
       <div id="searchResults" class="payload-list"></div>
