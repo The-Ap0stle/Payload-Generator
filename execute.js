@@ -23,7 +23,7 @@ function populateMsfvenomBuilder() {
   const formatDropdown = document.getElementById("formatDropdownBuilder");
 
   // Populate dropdowns from JSON
-  const payloads = allPayloads["Msfvenom Builder"]["Payloads"] || [];
+  const payloads = allPayloads["Msfvenom Builder"]["Payload"] || [];
   const encoders = allPayloads["Msfvenom Builder"]["Encoder"] || [];
   const formats = allPayloads["Msfvenom Builder"]["Format"] || [];
 
