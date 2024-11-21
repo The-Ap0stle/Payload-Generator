@@ -62,6 +62,8 @@ function updateSecondaryFilter() {
     const resultsContainer = document.getElementById("searchResults");
     const errorMessage = document.getElementById("error-message");
     const copyButton = document.getElementById("copyButton");
+    const lhostInput = document.getElementById("lhostInput").value; // Get the value
+    const lportInput = document.getElementById("lportInput").value;
     
     errorMessage.textContent = "";
     resultsContainer.innerHTML = "";
