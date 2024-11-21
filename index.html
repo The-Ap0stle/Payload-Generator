@@ -34,28 +34,6 @@
         </select>
         <button class="search-button" onclick="executeSearch()">Search</button>
       </div>
-      <!-- New Sections -->
-      <!-- Msfvenom Builder Section -->
-      <div id="msfvenomBuilder" class="msfvenom-container" style="display: none;">
-        <h1>Msfvenom Builder</h1>
-        <input type="text" id="lhostInputBuilder" placeholder="LHOST" />
-        <input type="text" id="lportInputBuilder" placeholder="LPORT" />
-        <select id="payloadDropdownBuilder">
-          <option value="">Select Payload</option>
-        </select>
-        <select id="encoderDropdownBuilder">
-          <option value="">Select Encoder</option>
-        </select>
-        <input type="text" id="iterationsInputBuilder" placeholder="Iterations" />
-        <select id="formatDropdownBuilder">
-          <option value="">Select Format</option>
-        </select>
-        <input type="text" id="outputInputBuilder" placeholder="Output" />
-        <button id="generateButtonBuilder" onclick="generateMsfvenomCommand()">Generate</button>
-        <div id="generatedCommandContainer"></div>
-      </div>
-      <!-- ENew Sections -->
-
       <!-- Dynamic Input Fields -->
       <div id="dynamicInputs" style="display: none;">
         <input
@@ -77,6 +55,28 @@
           style="display: none;"
         />
       </div> 
+
+            <!-- New Sections -->
+      <!-- Msfvenom Builder Section -->
+      <div id="msfvenomBuilder" class="msfvenom-container" style="display: none;">
+        <h1>Msfvenom Builder</h1>
+        <input type="text" id="lhostInputBuilder" placeholder="LHOST" />
+        <input type="text" id="lportInputBuilder" placeholder="LPORT" />
+        <select id="payloadDropdownBuilder">
+          <option value="">Select Payload</option>
+        </select>
+        <select id="encoderDropdownBuilder">
+          <option value="">Select Encoder</option>
+        </select>
+        <input type="text" id="iterationsInputBuilder" placeholder="Iterations" />
+        <select id="formatDropdownBuilder">
+          <option value="">Select Format</option>
+        </select>
+        <input type="text" id="outputInputBuilder" placeholder="Output" />
+        <button id="generateButtonBuilder" onclick="generateMsfvenomCommand()">Generate</button>
+        <div id="generatedCommandContainer"></div>
+      </div>
+      <!-- ENew Sections -->
          
       <div id="error-message" class="error-message"></div>
       <button id="copyButton" onclick="copyPayloads()">📄</button>

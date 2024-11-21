@@ -39,22 +39,17 @@ function updateSecondaryFilter() {
   const secondaryFilter = document.getElementById("secondaryFilter");
   const dynamicInputs = document.getElementById("dynamicInputs");
   const filenameInput = document.getElementById("filenameInput");
-  const searchSection = document.getElementById("searchSection");
   const msfvenomBuilder = document.getElementById("msfvenomBuilder");
   secondaryFilter.innerHTML = "";
   dynamicInputs.style.display = "none";
   filenameInput.style.display = "none";
-  searchSection.style.display = "block";
   msfvenomBuilder.style.display = "none";
 
   if (primaryFilter === "Msfvenom Builder") {
-    searchSection.style.display = "none"; // Hide existing fields
     msfvenomBuilder.style.display = "block"; // Show Msfvenom Builder
     populateMsfvenomBuilder(); // Populate builder dropdowns
-  } else {
-    searchSection.style.display = "block"; // Show existing fields
-    msfvenomBuilder.style.display = "none"; // Hide Msfvenom Builder
-  }
+    return;
+  } 
 
   if (primaryFilter === "Reverse Shell") {
     dynamicInputs.style.display = "flex";

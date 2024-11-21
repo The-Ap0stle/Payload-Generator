@@ -148,4 +148,58 @@ body {
       top: 10px; /* Keep vertical alignment */
     }
   }
+
+  /* Msfvenom Builder Section Styles */
+.msfvenom-container {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #222;
+  color: #fff;
+}
+
+.msfvenom-container input[type="text"],
+.msfvenom-container select {
+  margin: 10px 0;
+  width: 100%;
+  max-width: 400px;
+  padding: 12px;
+  font-size: 1em;
+  border-radius: 5px;
+  border: 1px solid #555;
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+.msfvenom-container input[type="text"]:focus,
+.msfvenom-container select:focus {
+  border-color: #03dac6;
+}
+
+.msfvenom-container button {
+  background-color: #03dac6;
+  color: #121212;
+  padding: 12px;
+  font-size: 1em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 15px;
+}
+
+.msfvenom-container button:hover {
+  background-color: #018786;
+}
+
+.msfvenom-container #generatedCommandContainer {
+  margin-top: 20px;
+  background-color: #333;
+  padding: 10px;
+  word-wrap: break-word;
+  border-radius: 5px;
+  color: #e0e0e0;
+}
   
