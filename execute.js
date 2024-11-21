@@ -34,7 +34,7 @@ function populateMsfvenomBuilder() {
 
 // Helper Function to Populate Dropdowns
 function populateDropdown(dropdown, items) {
-  dropdown.innerHTML = ""; // Clear existing options
+  dropdown.innerHTML = '<option value="">Select an Option</option>'; // Clear existing options
   if (items.length === 0) {
     dropdown.innerHTML = '<option value="">No Options Available</option>';
     return;
@@ -110,9 +110,9 @@ function generateMsfvenomCommand() {
   const copyButton = document.getElementById("copyCommandButtonBuilder");
 
   if (!lhost || !lport || !payload || !output) {
-    alert("LHOST, LPORT, Payload, and Output are required fields!");
+    errorMessage.textContent = "LHOST, LPORT, Payload, and Output are required fields!";
     return;
-  }
+  } 
 
   let command = `msfvenom -p ${payload} LHOST=${lhost} LPORT=${lport} -o ${output}`;
   if (format) command += ` -f ${format}`;
@@ -130,7 +130,6 @@ function copyMsfvenomCommand() {
   if (commandText) {
     navigator.clipboard
       .writeText(commandText)
-      .then(() => alert("Command copied to clipboard!"))
       .catch((err) => console.error("Error copying command:", err));
   }
 }
