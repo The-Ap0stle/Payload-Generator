@@ -34,7 +34,8 @@
         </select>
         <button class="search-button" onclick="executeSearch()">Search</button>
       </div>
-      <!-- New Sections -->
+      
+      <!-- Msfvenom Dynamic Inputs -->
       <div id="msfvenomInputs" style="display: none; margin-top: 10px;">
         <input type="text" id="lhostInput" placeholder="LHOST" />
         <input type="text" id="lportInput" placeholder="LPORT" />
@@ -49,30 +50,7 @@
           style="width: 80px;"
         />
       </div>
-      <!-- ENew Sections -->
 
-      <!-- Dynamic Input Fields -->
-      <div id="dynamicInputs" style="display: none;">
-        <input
-          type="text"
-          id="lhostInput"
-          placeholder="LHOST"
-          style="margin-right: 10px;"
-        />
-        <input
-          type="text"
-          id="lportInput"
-          placeholder="LPORT"
-          style="margin-right: 10px;"
-        />
-        <input
-          type="text"
-          id="filenameInput"
-          placeholder="Filename"
-          style="display: none;"
-        />
-      </div> 
-         
       <div id="error-message" class="error-message"></div>
       <button id="copyButton" onclick="copyPayloads()">📄</button>
       <div id="searchResults" class="payload-list"></div>
