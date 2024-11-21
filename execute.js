@@ -23,107 +23,70 @@ function updateSecondaryFilter() {
   const secondaryFilter = document.getElementById("secondaryFilter");
   const dynamicInputs = document.getElementById("dynamicInputs");
   const filenameInput = document.getElementById("filenameInput");
-  const searchBar = document.getElementById("searchInput");
+
+  const payloadDropdown = document.getElementById("payloadDropdown");
+  const encoderDropdown = document.getElementById("encoderDropdown");
+  const iterationsInput = document.getElementById("iterationsInput");
+  const formatDropdown = document.getElementById("formatDropdown");
+  const outputInput = document.getElementById("outputInput");
+  const generateButton = document.getElementById("generateButton");
+
   secondaryFilter.innerHTML = "";
   dynamicInputs.style.display = "none";
   filenameInput.style.display = "none";
-  searchBar.style.display = "inline-block";
-  secondaryFilter.style.display = "inline-block";
 
+  // Show Msfvenom Builder fields
   if (primaryFilter === "Msfvenom Builder") {
-    dynamicInputs.style.display = "block";
-    searchBar.style.display = "none";
-    secondaryFilter.style.display = "none";
-    populateDropdowns();
+    dynamicInputs.style.display = "flex";
+    payloadDropdown.style.display = "inline-block";
+    encoderDropdown.style.display = "inline-block";
+    iterationsInput.style.display = "inline-block";
+    formatDropdown.style.display = "inline-block";
+    outputInput.style.display = "inline-block";
+    generateButton.style.display = "inline-block";
+
+    // Populate dropdowns
+    const payloads = allPayloads["Msfvenom Builder"]["Payloads"];
+    const encoders = allPayloads["Msfvenom Builder"]["Encoder"];
+
+    populateDropdown(payloadDropdown, payloads);
+    populateDropdown(encoderDropdown, encoders);
   }
+} 
+
+// Populate dropdown with options
+function populateDropdown(dropdown, options) {
+  dropdown.innerHTML = '<option value="">Select Option</option>'; // Reset options
+  options.forEach(option => {
+    const optElement = document.createElement("option");
+    optElement.value = option;
+    optElement.textContent = option;
+    dropdown.appendChild(optElement);
+  });
 }
 
-  // Populate Dropdowns for Msfvenom Builder
-function populateDropdowns() {
-  const payloadDropdown = document.getElementById("payloadDropdown");
-  const formatDropdown = document.getElementById("formatDropdown");
-  const encoderDropdown = document.getElementById("encoderDropdown");
-
-  payloadDropdown.innerHTML = '<option value="">Select Payload</option>';
-  formatDropdown.innerHTML = '<option value="">Select Format</option>';
-  encoderDropdown.innerHTML = '<option value="">Select Encoder</option>';
-
-  const msfvenomData = allPayloads["Msfvenom Builder"];
-
-  if (msfvenomData) {
-    msfvenomData["Payloads"].forEach(payload => {
-      const option = document.createElement("option");
-      option.value = payload;
-      option.textContent = payload;
-      payloadDropdown.appendChild(option);
-    });
-
-    msfvenomData["Formats"].forEach(format => {
-      const option = document.createElement("option");
-      option.value = format;
-      option.textContent = format;
-      formatDropdown.appendChild(option);
-    });
-
-    msfvenomData["Encoders"].forEach(encoder => {
-      const option = document.createElement("option");
-      option.value = encoder;
-      option.textContent = encoder;
-      encoderDropdown.appendChild(option);
-    });
-  }
-}
-
-// Generate Msfvenom Payload
-function generateMsfvenomPayload() {
+function generateMsfvenomCommand() {
   const lhost = document.getElementById("lhostInput").value.trim();
   const lport = document.getElementById("lportInput").value.trim();
-  const output = document.getElementById("outputInput").value.trim();
   const payload = document.getElementById("payloadDropdown").value;
-  const format = document.getElementById("formatDropdown").value;
   const encoder = document.getElementById("encoderDropdown").value;
   const iterations = document.getElementById("iterationsInput").value.trim();
-  const errorMessage = document.getElementById("error-message");
-  const resultContainer = document.getElementById("generatedPayload");
-
-  errorMessage.textContent = "";
-  resultContainer.innerHTML = "";
-
-  // Validate compulsory fields
-  if (!lhost || !lport || !output || !payload) {
-    errorMessage.textContent = "LHOST, LPORT, Output Filename, and Payload are compulsory fields.";
+  const format = document.getElementById("formatDropdown").value;
+  const output = document.getElementById("outputInput").value.trim();
+  
+  if (!lhost || !lport || !payload || !output) {
+    alert("LHOST, LPORT, Payload, and Output are required fields!");
     return;
   }
 
-  // Construct the payload command
-  let payloadCommand = `msfvenom -p ${payload} LHOST=${lhost} LPORT=${lport} -o ${output}`;
-  if (format) payloadCommand += ` -f ${format}`;
-  if (encoder) payloadCommand += ` -e ${encoder}`;
-  if (iterations) payloadCommand += ` -i ${iterations}`;
+  let command = `msfvenom -p ${payload} LHOST=${lhost} LPORT=${lport} -o ${output}`;
+  if (format) command += ` -f ${format}`;
+  if (encoder) command += ` -e ${encoder}`;
+  if (iterations) command += ` -i ${iterations}`;
 
-  resultContainer.textContent = payloadCommand;
+  alert(`Generated Command:\n\n${command}`);
 }
 
-
-  if (primaryFilter === "Reverse Shell") {
-    dynamicInputs.style.display = "flex";
-  } else if (primaryFilter === "File Transfer") {
-    dynamicInputs.style.display = "flex";
-    filenameInput.style.display = "inline-block";
-  }
-
-  if (primaryFilter && allPayloads[primaryFilter]) {
-    Object.keys(allPayloads[primaryFilter]).forEach(subType => {
-      const option = document.createElement("option");
-      option.value = subType;
-      option.textContent = subType;
-      secondaryFilter.appendChild(option);
-    });
-    secondaryFilter.classList.remove("disabled");
-  } else {
-    secondaryFilter.innerHTML = '<option>No Options</option>';
-    secondaryFilter.classList.add("disabled");
-  }
 
 
 // Function to fetch and load payloads from JSON file

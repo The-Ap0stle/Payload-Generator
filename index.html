@@ -35,7 +35,6 @@
         <button class="search-button" onclick="executeSearch()">Search</button>
       </div>
       <!-- New Sections -->
-      <!-- Dynamic Input Fields -->
       <div id="dynamicInputs" style="display: none;">
         <input
           type="text"
@@ -49,13 +48,29 @@
           placeholder="LPORT"
           style="margin-right: 10px;"
         />
+        <select id="payloadDropdown" style="display: none;">
+          <option value="">Select Payload</option>
+        </select>
+        <select id="encoderDropdown" style="display: none;">
+          <option value="">Select Encoder</option>
+        </select>
         <input
           type="text"
-          id="filenameInput"
-          placeholder="Filename"
+          id="iterationsInput"
+          placeholder="Iterations"
+          style="display: none; margin-right: 10px;"
+        />
+        <select id="formatDropdown" style="display: none;">
+          <option value="">Select Format</option>
+        </select>
+        <input
+          type="text"
+          id="outputInput"
+          placeholder="Output"
           style="display: none;"
         />
-      </div> 
+        <button id="generateButton" style="display: none;" onclick="generateMsfvenomCommand()">Generate</button>
+      </div>
       <!-- ENew Sections -->   
       <div id="error-message" class="error-message"></div>
       <button id="copyButton" onclick="copyPayloads()">📄</button>
