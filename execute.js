@@ -27,14 +27,14 @@ function populateMsfvenomBuilder() {
   const encoders = allPayloads["Msfvenom Builder"]["Encoder"] || [];
   const formats = allPayloads["Msfvenom Builder"]["Format"] || [];
 
-  populateDropdown(payloadDropdown, payloads);
-  populateDropdown(encoderDropdown, encoders);
-  populateDropdown(formatDropdown, formats);
+  populateDropdown(payloadDropdown, payloads, "Select a Payload");
+  populateDropdown(encoderDropdown, encoders, "Select an Encoder");
+  populateDropdown(formatDropdown, formats, "Select a Format");
 }
 
 // Helper Function to Populate Dropdowns
-function populateDropdown(dropdown, items) {
-  dropdown.innerHTML = '<option value="">Select an Option</option>'; // Clear existing options
+function populateDropdown(dropdown, items, placeholder) {
+  dropdown.innerHTML = '<option value="">${placeholder}</option>'; // Clear existing options
   if (items.length === 0) {
     dropdown.innerHTML = '<option value="">No Options Available</option>';
     return;
@@ -108,11 +108,16 @@ function generateMsfvenomCommand() {
   const output = document.getElementById("outputInputBuilder").value.trim();
   const commandContainer = document.getElementById("generatedCommandContainer");
   const copyButton = document.getElementById("copyCommandButtonBuilder");
+  const errorMessage = document.getElementById("error-message");
 
   if (!lhost || !lport || !payload || !output) {
     errorMessage.textContent = "LHOST, LPORT, Payload, and Output are required fields!";
+    errorMessage.style.display = "block";
     return;
-  } 
+  } else {
+    errorMessage.textContent = ""; // Clear any previous error
+    errorMessage.style.display = "none";
+  }
 
   let command = `msfvenom -p ${payload} LHOST=${lhost} LPORT=${lport} -o ${output}`;
   if (format) command += ` -f ${format}`;
