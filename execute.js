@@ -44,6 +44,8 @@ function updateSecondaryFilter() {
   secondaryFilter.innerHTML = "";
   dynamicInputs.style.display = "none";
   filenameInput.style.display = "none";
+  searchSection.style.display = "block";
+  msfvenomBuilder.style.display = "none";
 
   if (primaryFilter === "Msfvenom Builder") {
     searchSection.style.display = "none"; // Hide existing fields
