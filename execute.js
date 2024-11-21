@@ -32,6 +32,21 @@ function populateMsfvenomBuilder() {
   populateDropdown(formatDropdown, formats);
 }
 
+// Helper Function to Populate Dropdowns
+function populateDropdown(dropdown, items) {
+  dropdown.innerHTML = ""; // Clear existing options
+  if (items.length === 0) {
+    dropdown.innerHTML = '<option value="">No Options Available</option>';
+    return;
+  }
+
+  items.forEach(item => {
+    const option = document.createElement("option");
+    option.value = item;
+    option.textContent = item;
+    dropdown.appendChild(option);
+  });
+}
 
 // Update Secondary Filter Options
 function updateSecondaryFilter() {
