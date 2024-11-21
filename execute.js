@@ -22,6 +22,12 @@ function updateSecondaryFilter() {
     const primaryFilter = document.getElementById("primaryFilter").value;
     const secondaryFilter = document.getElementById("secondaryFilter");
     secondaryFilter.innerHTML = "";
+
+    if (primaryFilter === "Reverse Shell") {
+      dynamicInputs.style.display = "flex";
+    } else {
+      dynamicInputs.style.display = "none";
+    }
   
     if (primaryFilter && allPayloads[primaryFilter]) {
       Object.keys(allPayloads[primaryFilter]).forEach(subType => {
@@ -71,6 +77,13 @@ function updateSecondaryFilter() {
     }
     
     let filteredPayloads = allPayloads[primaryFilter][secondaryFilter];
+
+     // Replace placeholders if inputs are provided
+  if (primaryFilter === "Reverse Shell" && lhostInput && lportInput) {
+    filteredPayloads = filteredPayloads.map((payload) =>
+      payload.replace(/\[LHOST\]/g, lhostInput).replace(/\[LPORT\]/g, lportInput)
+    );
+  }
     
     // Filter by keyword if provided
     if (keyword) {
