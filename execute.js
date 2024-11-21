@@ -118,7 +118,7 @@ function generateMsfvenomCommand() {
   if (encoder) command += ` -e ${encoder}`;
   if (iterations) command += ` -i ${iterations}`;
 
-  commandContainer.innerHTML = `<p>Generated Command:</p><code>${command}</code>`;
+  commandContainer.innerHTML = `<p>Run the Following Command in Terminal:</p><code>${command}</code>`;
 }
 
 
