@@ -107,6 +107,7 @@ function generateMsfvenomCommand() {
   const format = document.getElementById("formatDropdownBuilder").value;
   const output = document.getElementById("outputInputBuilder").value.trim();
   const commandContainer = document.getElementById("generatedCommandContainer");
+  const copyButton = document.getElementById("copyCommandButtonBuilder");
 
   if (!lhost || !lport || !payload || !output) {
     alert("LHOST, LPORT, Payload, and Output are required fields!");
@@ -119,8 +120,20 @@ function generateMsfvenomCommand() {
   if (iterations) command += ` -i ${iterations}`;
 
   commandContainer.innerHTML = `<p>Run the Following Command in Terminal:</p><code>${command}</code>`;
+  copyButton.style.display = "inline-block"; // Show the copy button
 }
 
+function copyMsfvenomCommand() {
+  const commandContainer = document.getElementById("generatedCommandContainer");
+  const commandText = commandContainer.innerText || "";
+
+  if (commandText) {
+    navigator.clipboard
+      .writeText(commandText)
+      .then(() => alert("Command copied to clipboard!"))
+      .catch((err) => console.error("Error copying command:", err));
+  }
+}
 
 // Executes search based on filters and optional keyword
 function executeSearch() {
