@@ -39,6 +39,8 @@ function updateSecondaryFilter() {
   const secondaryFilter = document.getElementById("secondaryFilter");
   const dynamicInputs = document.getElementById("dynamicInputs");
   const filenameInput = document.getElementById("filenameInput");
+  const searchSection = document.getElementById("searchSection");
+  const msfvenomBuilder = document.getElementById("msfvenomBuilder");
   secondaryFilter.innerHTML = "";
   dynamicInputs.style.display = "none";
   filenameInput.style.display = "none";
