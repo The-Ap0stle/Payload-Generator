@@ -34,7 +34,13 @@ function populateMsfvenomBuilder() {
 
 // Helper Function to Populate Dropdowns
 function populateDropdown(dropdown, items, placeholder) {
-  dropdown.innerHTML = `<option value="">${placeholder}</option>`; // Clear existing options
+  dropdown.innerHTML = ''; // Clear existing options
+
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.textContent = placeholder;
+  dropdown.appendChild(defaultOption);
+  
   if (items.length === 0) {
     dropdown.innerHTML = '<option value="">No Options Available</option>';
     return;
