@@ -61,14 +61,20 @@ function updateSecondaryFilter() {
   const dynamicInputs = document.getElementById("dynamicInputs");
   const filenameInput = document.getElementById("filenameInput");
   const msfvenomBuilder = document.getElementById("msfvenomBuilder");
-  const searchSection = document.getElementById("searchSection");
+  const searchInput = document.getElementById("searchInput");
+  const searchButton = document.querySelector(".search-button");
   secondaryFilter.innerHTML = "";
   dynamicInputs.style.display = "none";
   filenameInput.style.display = "none";
   msfvenomBuilder.style.display = "none";
+  secondaryFilter.style.display = "inline-block";
+  searchInput.style.display = "inline-block";
+  searchButton.style.display = "inline-block";
 
   if (primaryFilter === "Msfvenom Builder") {
-    searchSection.style.display = "none"; // Dont Show search section
+    searchInput.style.display = "none";
+    searchButton.style.display = "none";
+    secondaryFilter.style.display = "none";
     msfvenomBuilder.style.display = "block"; // Show Msfvenom Builder
     populateMsfvenomBuilder(); // Populate builder dropdowns
     return;
