@@ -132,7 +132,7 @@ function generateMsfvenomCommand() {
   if (encoder) command += ` -e ${encoder}`;
   if (iterations) command += ` -i ${iterations}`;
 
-  commandContainer.innerHTML = `<p>Run the Following Command in Terminal:</p><code>${command}</code>`;
+  //commandContainer.innerHTML = `<p>Run the Following Command in Terminal:</p><code>${command}</code>`;
   copyButton.style.display = "inline-block"; // Show the copy button
 }
 
