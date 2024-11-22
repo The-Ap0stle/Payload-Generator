@@ -40,7 +40,7 @@ function populateDropdown(dropdown, items, placeholder) {
   defaultOption.value = '';
   defaultOption.textContent = placeholder;
   dropdown.appendChild(defaultOption);
-  
+
   if (items.length === 0) {
     dropdown.innerHTML = '<option value="">No Options Available</option>';
     return;
@@ -61,12 +61,14 @@ function updateSecondaryFilter() {
   const dynamicInputs = document.getElementById("dynamicInputs");
   const filenameInput = document.getElementById("filenameInput");
   const msfvenomBuilder = document.getElementById("msfvenomBuilder");
+  const searchSection = document.getElementById("searchSection");
   secondaryFilter.innerHTML = "";
   dynamicInputs.style.display = "none";
   filenameInput.style.display = "none";
   msfvenomBuilder.style.display = "none";
 
   if (primaryFilter === "Msfvenom Builder") {
+    searchSection.style.display = "none"; // Dont Show search section
     msfvenomBuilder.style.display = "block"; // Show Msfvenom Builder
     populateMsfvenomBuilder(); // Populate builder dropdowns
     return;
