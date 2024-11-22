@@ -64,11 +64,13 @@ function updateSecondaryFilter() {
   const searchInput = document.getElementById("searchInput");
   const searchButton = document.querySelector(".search-button");
   const searchResults = document.getElementById("searchResults");
+  const copyButton = document.getElementById("copyButton");
 
   secondaryFilter.innerHTML = "";
   dynamicInputs.style.display = "none";
   filenameInput.style.display = "none";
   msfvenomBuilder.style.display = "none";
+  copyButton.style.display = "none";
   secondaryFilter.style.display = "inline-block";
   searchInput.style.display = "inline-block";
   searchButton.style.display = "inline-block";
