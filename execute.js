@@ -67,9 +67,9 @@ function updateSecondaryFilter() {
   dynamicInputs.style.display = "none";
   filenameInput.style.display = "none";
   msfvenomBuilder.style.display = "none";
-  //secondaryFilter.style.display = "inline-block";
-  //searchInput.style.display = "inline-block";
-  //searchButton.style.display = "inline-block";
+  secondaryFilter.style.display = "inline-block";
+  searchInput.style.display = "inline-block";
+  searchButton.style.display = "inline-block";
 
   if (primaryFilter === "Msfvenom Builder") {
     searchInput.style.display = "none";
@@ -138,7 +138,7 @@ function generateMsfvenomCommand() {
   if (encoder) command += ` -e ${encoder}`;
   if (iterations) command += ` -i ${iterations}`;
 
-  commandContainer.innerHTML = `<code>${command}</code>`;
+  commandContainer.innerHTML = `<p></p><code>${command}</code>`;
   copyButton.style.display = "inline-block"; // Show the copy button
 }
 
