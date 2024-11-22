@@ -63,6 +63,8 @@ function updateSecondaryFilter() {
   const msfvenomBuilder = document.getElementById("msfvenomBuilder");
   const searchInput = document.getElementById("searchInput");
   const searchButton = document.querySelector(".search-button");
+  const searchResults = document.getElementById("searchResults");
+
   secondaryFilter.innerHTML = "";
   dynamicInputs.style.display = "none";
   filenameInput.style.display = "none";
@@ -70,6 +72,7 @@ function updateSecondaryFilter() {
   secondaryFilter.style.display = "inline-block";
   searchInput.style.display = "inline-block";
   searchButton.style.display = "inline-block";
+  searchResults.innerHTML = ""; // Clear the results
 
   if (primaryFilter === "Msfvenom Builder") {
     searchInput.style.display = "none";
