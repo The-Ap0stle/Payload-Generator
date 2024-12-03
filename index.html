@@ -94,12 +94,8 @@
           style="width: 100%; margin-bottom: 15px; border-radius: 5px;"
           readonly
         ></textarea>
-        <button id="copyPOCButton" onclick="copyGeneratedPOC()" style="float: right;">📄 Copy</button>
-        <div style="clear: both;"></div>
-        <div id="postPOCBanner" style="margin-top: 20px; background: #252525; padding: 15px; border-radius: 5px;">
-          <h2>Post POC Generation Steps:</h2>
-          <p id="postPOCSteps">- Add instructions here for post-POC usage.</p>
-        </div>
+        <button class="action-button" onclick="generateCSRFPOC()">Generate</button>
+        <button class="action-button" onclick="copyGeneratedPOC()">Copy</button>
       </div>
       <!-- ENew Sections -->
          

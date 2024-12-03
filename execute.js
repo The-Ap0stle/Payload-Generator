@@ -170,56 +170,36 @@ function copyMsfvenomCommand() {
 // Function to generate CSRF POC
 function generateCSRFPOC() {
   const requestInput = document.getElementById("requestInput").value.trim();
+  const generatedPOC = document.getElementById("generatedPOC");
+
   if (!requestInput) {
     alert("Please enter a valid HTTP request.");
     return;
   }
 
-  const lines = requestInput.split("\n");
-  let method = "POST";
-  let action = "";
-  const headers = [];
-  const body = [];
-
-  lines.forEach((line) => {
-    if (line.startsWith("GET") || line.startsWith("POST")) {
-      const parts = line.split(" ");
-      method = parts[0];
-      action = parts[1];
-    } else if (line.trim() === "") {
-      body.push(...lines.slice(lines.indexOf(line) + 1));
-    } else {
-      headers.push(line);
-    }
-  });
-
-  const formBody = body.join("\n").replace(/&/g, "&amp;").replace(/"/g, "&quot;");
-  const csrfPOC = `
-<form action="${action}" method="${method}">
-${body
-  .map((param) => {
-    const [key, value] = param.split("=");
-    return `<input type="hidden" name="${key}" value="${value}" />`;
-  })
-  .join("\n")}
-<input type="submit" value="Submit Request" />
+  // Example POC generation logic
+  generatedPOC.value = `<html>
+<body>
+<form action="[TARGET_URL]" method="POST">
+<input type="hidden" name="[PARAM]" value="[VALUE]" />
+<input type="submit" value="Submit" />
 </form>
-`;
-
-  document.getElementById("generatedPOC").value = csrfPOC.trim();
-  document.getElementById("copyPOCButton").style.display = "inline-block";
+</body>
+</html>`;
 }
-// Function to copy generated POC
+
 function copyGeneratedPOC() {
   const generatedPOC = document.getElementById("generatedPOC");
   generatedPOC.select();
   document.execCommand("copy");
-  alert("CSRF POC copied to clipboard!");
+  alert("POC copied to clipboard!");
 }
-// Function to toggle CSRF POC generator
-function toggleCSRFGenerator() {
-  document.getElementById("searchSection").style.display = "none";
-  document.getElementById("csrfPOCSection").style.display = "block";
+
+function copyMsfvenomCommand() {
+  const commandContainer = document.getElementById("generatedCommandContainer");
+  navigator.clipboard.writeText(commandContainer.textContent).then(() => {
+    alert("Command copied to clipboard!");
+  });
 }
 
 
