@@ -223,3 +223,33 @@ body {
 #copyCommandButtonBuilder:active {
   transform: translateY(0);
 }
+
+.csrf-poc-container {
+  margin-top: 20px;
+  background-color: #222;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  color: #e0e0e0;
+}
+
+textarea {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  border: 1px solid #555;
+  padding: 10px;
+  resize: none;
+}
+
+textarea:focus {
+  border-color: #03dac6;
+}
+
+#postPOCBanner h2 {
+  color: #03dac6;
+}
+
+#postPOCBanner p {
+  margin-top: 10px;
+  color: #e0e0e0;
+}

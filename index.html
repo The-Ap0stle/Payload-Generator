@@ -56,7 +56,6 @@
         />
       </div> 
 
-            <!-- New Sections -->
       <!-- Msfvenom Builder Section -->
       <div id="msfvenomBuilder" class="msfvenom-container" style="display: none;">
         <h1>Msfvenom Builder</h1>
@@ -76,6 +75,31 @@
         <button id="generateButtonBuilder" onclick="generateMsfvenomCommand()">Generate</button>
         <button id="copyCommandButtonBuilder" style="display:none;" onclick="copyMsfvenomCommand()">Copy Command</button>
         <div id="generatedCommandContainer"></div>
+      </div>
+
+      <!-- New Sections -->
+       <!-- CSRF POC Generator Section -->
+      <div id="csrfPOCSection" style="display: none;" class="csrf-poc-container">
+        <h1>CSRF POC Generator</h1>
+        <textarea
+          id="requestInput"
+          placeholder="Paste the HTTP request here..."
+          rows="10"
+          style="width: 100%; margin-bottom: 15px; border-radius: 5px;"
+        ></textarea>
+        <textarea
+          id="generatedPOC"
+          placeholder="Generated CSRF POC will appear here..."
+          rows="10"
+          style="width: 100%; margin-bottom: 15px; border-radius: 5px;"
+          readonly
+        ></textarea>
+        <button id="copyPOCButton" onclick="copyGeneratedPOC()" style="float: right;">📄 Copy</button>
+        <div style="clear: both;"></div>
+        <div id="postPOCBanner" style="margin-top: 20px; background: #252525; padding: 15px; border-radius: 5px;">
+          <h2>Post POC Generation Steps:</h2>
+          <p id="postPOCSteps">- Add instructions here for post-POC usage.</p>
+        </div>
       </div>
       <!-- ENew Sections -->
          
