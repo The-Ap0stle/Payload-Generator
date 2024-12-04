@@ -253,3 +253,22 @@ textarea:focus {
   margin-top: 10px;
   color: #e0e0e0;
 }
+
+button.action-button,
+#copyCommandButtonBuilder,
+#generateButtonBuilder {
+  background-color: #03dac6;
+  color: #121212;
+  padding: 12px;
+  font-size: 1em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button.action-button:hover,
+#copyCommandButtonBuilder:hover,
+#generateButtonBuilder:hover {
+  background-color: #018786;
+}

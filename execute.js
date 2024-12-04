@@ -58,6 +58,7 @@ function populateDropdown(dropdown, items, placeholder) {
 function updateSecondaryFilter() {
   const primaryFilter = document.getElementById("primaryFilter").value;
   const secondaryFilter = document.getElementById("secondaryFilter");
+  const csrfPOCSection = document.getElementById("csrfPOCSection");
   const dynamicInputs = document.getElementById("dynamicInputs");
   const filenameInput = document.getElementById("filenameInput");
   const msfvenomBuilder = document.getElementById("msfvenomBuilder");
@@ -70,6 +71,7 @@ function updateSecondaryFilter() {
   dynamicInputs.style.display = "none";
   filenameInput.style.display = "none";
   msfvenomBuilder.style.display = "none";
+  csrfPOCSection.style.display = "none";
   copyButton.style.display = "none";
   secondaryFilter.style.display = "inline-block";
   searchInput.style.display = "inline-block";
@@ -171,11 +173,6 @@ function copyMsfvenomCommand() {
 function generateCSRFPOC() {
   const requestInput = document.getElementById("requestInput").value.trim();
   const generatedPOC = document.getElementById("generatedPOC");
-
-  if (!requestInput) {
-    alert("Please enter a valid HTTP request.");
-    return;
-  }
 
   // Example POC generation logic
   generatedPOC.value = `<html>
