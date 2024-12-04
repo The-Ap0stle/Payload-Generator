@@ -185,6 +185,7 @@ function clearCSRFPOCInputs() {
   generatedPOC.value = ""; // Clear generated POC content
 }
 function parseRequest(rawRequest) {
+  const errorMessage = document.getElementById("error-message");
   try {
     const [headerPart, bodyPart = ""] = rawRequest.split("\n\n");
     const headers = headerPart.split("\n");
@@ -209,8 +210,7 @@ function parseRequest(rawRequest) {
 
     return { method, baseUrl, params };
   } catch (err) {
-    console.error("Error parsing request:", err);
-    alert("Invalid request format.");
+    errorMessage.textContent = "Invalid request format.";
     return null;
   }
 }
@@ -218,6 +218,8 @@ function parseRequest(rawRequest) {
 function generateCSRFPOC() {
   const requestInput = document.getElementById("requestInput").value.trim();
   const generatedPOC = document.getElementById("generatedPOC");
+  const errorMessage = document.getElementById("error-message");
+  errorMessage.textContent = ""; // Clear any previous error
 
   const requestDetails = parseRequest(requestInput);
   if (!requestDetails) {
@@ -274,7 +276,7 @@ function executeSearch() {
     return;
   }
   
-  let filteredPayloads = allPayloads[primaryFilter][secondaryFilter];
+  let filteredPayloads = allPayloads[primaryFilter][secondaryFilter] || [];
 
    // Replace placeholders if inputs are provided
    if (primaryFilter === "Reverse Shell") {
