@@ -92,6 +92,7 @@ function updateSecondaryFilter() {
     searchButton.style.display = "none";
     secondaryFilter.style.display = "none";
     csrfPOCSection.style.display = "block"; // Show CSRF POC Section
+    clearCSRFPOCInputs(); // Clear CSRF POC inputs and generated POC
     generateCSRFPOC(); // Populate builder dropdowns
     return;
   } 
@@ -176,16 +177,24 @@ function copyMsfvenomCommand() {
 }
 
 // Function to generate CSRF POC
+function clearCSRFPOCInputs() {
+  const requestInput = document.getElementById("requestInput");
+  const generatedPOC = document.getElementById("generatedPOC");
+
+  requestInput.value = ""; // Clear input
+  generatedPOC.value = ""; // Clear generated POC content
+}
 function parseRequest(rawRequest) {
   try {
     const [headerPart, bodyPart = ""] = rawRequest.split("\n\n");
     const headers = headerPart.split("\n");
     const methodAndUri = headers.shift().split(" ");
+    if (methodAndUri.length < 2) throw new Error("Invalid format");
     const method = methodAndUri[0];
     const uri = methodAndUri[1];
     const hostHeader = headers.find(h => h.toLowerCase().startsWith("host:"));
+    if (!hostHeader) throw new Error("Host header missing");
     const host = hostHeader ? hostHeader.split(": ")[1].trim() : "";
-
     const isHTTPS = uri.startsWith("https://") || (host && host.startsWith("https://"));
     const baseUrl = `${isHTTPS ? "https" : "http"}://${host}${uri.split("?")[0]}`;
     
@@ -238,7 +247,6 @@ function copyGeneratedPOC() {
   const generatedPOC = document.getElementById("generatedPOC");
   generatedPOC.select();
   document.execCommand("copy");
-  alert("Generated POC copied to clipboard!");
 }
 
 // Executes search based on filters and optional keyword
