@@ -168,30 +168,6 @@ function copyMsfvenomCommand() {
       .catch((err) => console.error("Error copying command:", err));
   }
 }
-
-// Function to generate CSRF POC
-function generateCSRFPOC() {
-  const requestInput = document.getElementById("requestInput").value.trim();
-  const generatedPOC = document.getElementById("generatedPOC");
-
-  // Example POC generation logic
-  generatedPOC.value = `<html>
-<body>
-<form action="[TARGET_URL]" method="POST">
-<input type="hidden" name="[PARAM]" value="[VALUE]" />
-<input type="submit" value="Submit" />
-</form>
-</body>
-</html>`;
-}
-
-function copyGeneratedPOC() {
-  const generatedPOC = document.getElementById("generatedPOC");
-  generatedPOC.select();
-  document.execCommand("copy");
-  alert("POC copied to clipboard!");
-}
-
 function copyMsfvenomCommand() {
   const commandContainer = document.getElementById("generatedCommandContainer");
   navigator.clipboard.writeText(commandContainer.textContent).then(() => {
@@ -199,6 +175,71 @@ function copyMsfvenomCommand() {
   });
 }
 
+// Function to generate CSRF POC
+function parseRequest(rawRequest) {
+  try {
+    const [headerPart, bodyPart = ""] = rawRequest.split("\n\n");
+    const headers = headerPart.split("\n");
+    const methodAndUri = headers.shift().split(" ");
+    const method = methodAndUri[0];
+    const uri = methodAndUri[1];
+    const hostHeader = headers.find(h => h.toLowerCase().startsWith("host:"));
+    const host = hostHeader ? hostHeader.split(": ")[1].trim() : "";
+
+    const isHTTPS = uri.startsWith("https://") || (host && host.startsWith("https://"));
+    const baseUrl = `${isHTTPS ? "https" : "http"}://${host}${uri.split("?")[0]}`;
+    
+    const params = (method === "POST" ? bodyPart : uri.split("?")[1] || "")
+      .split("&")
+      .filter(Boolean)
+      .map(param => param.split("="))
+      .reduce((acc, [key, value]) => {
+        acc[key] = value || "";
+        return acc;
+      }, {});
+
+    return { method, baseUrl, params };
+  } catch (err) {
+    console.error("Error parsing request:", err);
+    alert("Invalid request format.");
+    return null;
+  }
+}
+
+function generateCSRFPOC() {
+  const requestInput = document.getElementById("requestInput").value.trim();
+  const generatedPOC = document.getElementById("generatedPOC");
+
+  const requestDetails = parseRequest(requestInput);
+  if (!requestDetails) {
+    generatedPOC.value = "Error: Unable to generate POC. Check your request input.";
+    return;
+  }
+
+  const { method, baseUrl, params } = requestDetails;
+  const formInputs = Object.entries(params)
+    .map(([key, value]) => `<input type="hidden" name="${key}" value="${value}" />`)
+    .join("\n\t\t");
+
+  const pocHTML = `
+<html>
+<body>
+<form method="${method}" action="${baseUrl}">
+${formInputs}
+<input type="submit" value="Submit" />
+</form>
+</body>
+</html>`.trim();
+
+  generatedPOC.value = pocHTML;
+}
+
+function copyGeneratedPOC() {
+  const generatedPOC = document.getElementById("generatedPOC");
+  generatedPOC.select();
+  document.execCommand("copy");
+  alert("Generated POC copied to clipboard!");
+}
 
 // Executes search based on filters and optional keyword
 function executeSearch() {
