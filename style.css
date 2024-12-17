@@ -241,21 +241,13 @@ textarea {
   resize: none;
 }
 
-textarea2 {
-  background-color: #1e1e1e;
-  color: #ffffff;
-  border: 1px solid #555;
-  padding: 1px;
-  resize: none;
-}
+
 
 textarea:focus {
   border-color: #03dac6;
 }
 
-textarea2:focus {
-  border-color: #03dac6;
-}
+
 
 #postPOCBanner h2 {
   color: #03dac6;
