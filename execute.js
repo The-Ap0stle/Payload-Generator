@@ -184,36 +184,78 @@ function clearCSRFPOCInputs() {
   requestInput.value = ""; // Clear input
   generatedPOC.value = ""; // Clear generated POC content
 }
+
+//To Print the error message in the console and display it in the UI
 function parseRequest(rawRequest) {
   const errorMessage = document.getElementById("error-message");
+  clearError(); // Clear any previous error message before starting a new parse
+
+  if (!rawRequest.trim()) {
+    // If the input is empty or contains only whitespace, do nothing
+    return null;
+  }
+
   try {
     const [headerPart, bodyPart = ""] = rawRequest.split("\n\n");
-    const headers = headerPart.split("\n");
-    const methodAndUri = headers.shift().split(" ");
-    if (methodAndUri.length < 2) throw new Error("Invalid format");
+    const headers = headerPart.split("\n").map(line => line.trim()).filter(Boolean);
+    if (headers.length === 0) throw new Error("Request headers are missing.");
+
+    const methodAndUri = headers[0].split(" ");
+    if (methodAndUri.length < 2) throw new Error("Invalid request line format.");
+
     const method = methodAndUri[0];
     const uri = methodAndUri[1];
     const hostHeader = headers.find(h => h.toLowerCase().startsWith("host:"));
-    if (!hostHeader) throw new Error("Host header missing");
-    const host = hostHeader ? hostHeader.split(": ")[1].trim() : "";
-    const isHTTPS = uri.startsWith("https://") || (host && host.startsWith("https://"));
+    if (!hostHeader) throw new Error("Host header is missing.");
+
+    const host = hostHeader.split(":")[1]?.trim() || "";
+    if (!host) throw new Error("Host value is missing in the Host header.");
+
+    const isHTTPS = uri.startsWith("https://") || host.startsWith("https://");
     const baseUrl = `${isHTTPS ? "https" : "http"}://${host}${uri.split("?")[0]}`;
-    
+
     const params = (method === "POST" ? bodyPart : uri.split("?")[1] || "")
       .split("&")
       .filter(Boolean)
       .map(param => param.split("="))
       .reduce((acc, [key, value]) => {
-        acc[key] = value || "";
+        acc[key] = decodeURIComponent(value || "");
         return acc;
       }, {});
 
     return { method, baseUrl, params };
   } catch (err) {
-    errorMessage.textContent = "Invalid request format.";
+    console.error("Error parsing request:", err.message);
+    showError(`Error: ${err.message}`); // Display error message when request is invalid
     return null;
   }
 }
+
+function clearError() {
+  const errorMessage = document.getElementById("error-message");
+  if (errorMessage) {
+    errorMessage.textContent = ""; // Clear any previous error message
+  }
+}
+
+function showError(message) {
+  const errorMessage = document.getElementById("error-message");
+  if (errorMessage) {
+    errorMessage.textContent = message; // Display the error message
+  }
+}
+
+// Example: Clear error when switching to the next option or triggering a new action
+document.getElementById("primaryFilter").addEventListener("click", () => {
+  clearError(); // Clear error when the user clicks "Next" or switches to a new step
+  // Optionally, add logic for what happens when the next option is selected
+});
+
+//Edit only if its needed
+// You can also clear the error when focusing on the input field again, or based on any other event:
+//document.getElementById("raw-request").addEventListener("focus", () => {
+//  clearError(); // Clear error when the user focuses on the input field
+//});
 
 function generateCSRFPOC() {
   const requestInput = document.getElementById("requestInput").value.trim();
